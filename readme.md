@@ -1,4 +1,4 @@
-# Tiny API - A C++ API Library
+# Tiny API - Rest API Framework for C++
 
 Tiny API is a minimalistic C++ library that allows you to build lightweight REST APIs using the Winsock library. With Tiny API, you can easily create and handle endpoints for sending JSON, text data, and even images. It's designed to be straightforward and user-friendly, allowing you to define the logic for your API endpoints, similar to modern web frameworks like Flask. No third party libraries were used to develop this API framework!
 
