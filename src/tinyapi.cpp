@@ -48,7 +48,7 @@ int TinyAPIHttpServer :: initialize_server(bool bind_default){
   return 0;
 }
 
-void TinyAPIHttpServer :: AwaitHTTPRequest(std::tuple<std::string, bool> (*connector_f)(std::string)){
+void TinyAPIHttpServer :: AwaitHTTPRequest(std::tuple<std::string, std::string> (*connector_f)(std::string)){
 /**
  * This method can be used to establish connection with the Http server.
  *
@@ -94,15 +94,15 @@ void TinyAPIHttpServer :: AwaitHTTPRequest(std::tuple<std::string, bool> (*conne
       std::string method, url_endpoint, http_version;
       requestLineStream >> method >> url_endpoint >> http_version;
       std::cout << "New GET Request! - " << url_endpoint << "\n";
-      std::tuple<std::string, bool> responseTup = connector_f(url_endpoint);
+      std::tuple<std::string, std::string> responseTup = connector_f(url_endpoint);
       std::string response = std::get<0>(responseTup);
-      bool data_binary = std::get<1>(responseTup);
-      if (data_binary){
-        // SendHTTPImage(client, responseMap["File"]);
-        SendHTTPImage_Testing(client, response);
-        continue;
-      }
-      SendHTTPResponse(client, response);
+      std::string response_format = std::get<1>(responseTup);
+      // if (data_format == "text/html"){
+      //   // SendHTTPImage(client, responseMap["File"]);
+      //   SendHTTPImage_Testing(client, response);
+      //   continue;
+      // }
+      SendHTTPResponse(client, response, response_format);
       memset(requestBuffer, 0, sizeof(requestBuffer));
       // delete[] requestBuffer;
     }
@@ -110,11 +110,11 @@ void TinyAPIHttpServer :: AwaitHTTPRequest(std::tuple<std::string, bool> (*conne
   // const std::string std_reply = "This is a standard reply.";
 }
 
-int TinyAPIHttpServer :: SendHTTPResponse(u_int client, std::string response){
+int TinyAPIHttpServer :: SendHTTPResponse(u_int client, std::string response, std::string response_format){
   std::string httpResponse = "HTTP/1.1 200 OK\n";
   httpResponse += ServerUtils.getCurDate();
   // httpResponse += "Last-Modified: Mon, 23 Oct 2023 14:40:37 GMT\n";
-  httpResponse += "Content-Type: text/html\n";
+  httpResponse += "Content-Type: " + response_format + "\n";
   httpResponse += "Content-Length:" + std::to_string(response.size()) + "\n";
   httpResponse += "Accept-Ranges: bytes\n";
   httpResponse += "Connection: close\n";
