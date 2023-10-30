@@ -66,7 +66,8 @@ int main(){
   // recieve and respond to multiple client requests.
   // You must create a "connector" function that returns a string tuple
   // The connector function must have all the logic regarding how a given request must be handled
-  // you can create different functions for handling different requests based on different routes.
+  // you can create different functions for handling different requests based on different routes
+  // so that you can tell TinyAPI what URL should trigger this function!
   // Connector function must return a string tuple such that :
   // First element is : text/json/binary in std::string format
   // And the second element should be : format of the data i.e text/html or image/png or image/jpeg 
