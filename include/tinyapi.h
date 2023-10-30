@@ -38,10 +38,8 @@ class TinyAPIHttpServer{
     TinyAPIHttpServer(int port, int buffer_sz, int maxConnections, std::string server_ip);
     ~TinyAPIHttpServer();
     int initialize_server(bool bind_default = true);
-    void AwaitHTTPRequest(std::tuple<std::string, std::string>(*connector_f)(std::string));
-    int SendHTTPResponse(u_int client, std::string response, std::string response_format);
-    int SendHTTPImage(u_int client, std::string filepath);
-    int SendHTTPImage_Testing(u_int client, std::string response);
+    void HttpRequestHandler(std::tuple<std::string, std::string>(*connector_f)(std::string));
+    int SendHttpResponse(u_int client, std::string response, std::string response_format);
     // std::string mapStringify()
 };
 
