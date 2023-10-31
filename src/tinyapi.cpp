@@ -1,6 +1,6 @@
 #include "../include/tinyapi.h"
 
-TinyAPIHttpServer :: TinyAPIHttpServer(int port, int buffer_sz, int maxConnections, std::string server_ip) : 
+TinyAPI :: TinyAPI(int port, int buffer_sz, int maxConnections, std::string server_ip) : 
     port(port),
     buffer_sz(buffer_sz)
   {
@@ -8,14 +8,14 @@ TinyAPIHttpServer :: TinyAPIHttpServer(int port, int buffer_sz, int maxConnectio
     ip = server_ip;
   }
 
-TinyAPIHttpServer :: ~TinyAPIHttpServer(){
+TinyAPI :: ~TinyAPI(){
   // write code for closing the main server socket and other cleanup
   std::cout << "Server Closing...\n";
   closesocket(ssocket);
   WSACleanup();
 }
 
-int TinyAPIHttpServer :: initialize_server(bool bind_default){
+int TinyAPI :: initialize_server(bool bind_default){
 /**
  * For initializing the winsock2 library required for using sockets on Windows machines and other server protocols.
  * Creates the main socket for the Http Server. Required process for initialization.
@@ -48,7 +48,7 @@ int TinyAPIHttpServer :: initialize_server(bool bind_default){
   return 0;
 }
 
-void TinyAPIHttpServer :: AwaitHTTPRequest(std::tuple<std::string, std::string> (*connector_f)(std::string)){
+void TinyAPI :: HttpRequestHandler(std::tuple<std::string, std::string> (*connector_f)(std::string)){
 /**
  * This method can be used to establish connection with the Http server.
  *
@@ -97,12 +97,7 @@ void TinyAPIHttpServer :: AwaitHTTPRequest(std::tuple<std::string, std::string> 
       std::tuple<std::string, std::string> responseTup = connector_f(url_endpoint);
       std::string response = std::get<0>(responseTup);
       std::string response_format = std::get<1>(responseTup);
-      // if (data_format == "text/html"){
-      //   // SendHTTPImage(client, responseMap["File"]);
-      //   SendHTTPImage_Testing(client, response);
-      //   continue;
-      // }
-      SendHTTPResponse(client, response, response_format);
+      SendHttpResponse(client, response, response_format);
       memset(requestBuffer, 0, sizeof(requestBuffer));
       // delete[] requestBuffer;
     }
@@ -110,7 +105,7 @@ void TinyAPIHttpServer :: AwaitHTTPRequest(std::tuple<std::string, std::string> 
   // const std::string std_reply = "This is a standard reply.";
 }
 
-int TinyAPIHttpServer :: SendHTTPResponse(u_int client, std::string response, std::string response_format){
+int TinyAPI :: SendHttpResponse(u_int client, std::string response, std::string response_format){
   std::string httpResponse = "HTTP/1.1 200 OK\n";
   httpResponse += ServerUtils.getCurDate();
   // httpResponse += "Last-Modified: Mon, 23 Oct 2023 14:40:37 GMT\n";
@@ -126,49 +121,4 @@ int TinyAPIHttpServer :: SendHTTPResponse(u_int client, std::string response, st
     return 1;
   }
   return 0;
-}
-
-int TinyAPIHttpServer :: SendHTTPImage_Testing(u_int client, std::string response){
-  std::string httpResponse = "HTTP/1.1 200 OK\n";
-  httpResponse += ServerUtils.getCurDate();;
-  // httpResponse += "Last-Modified: Mon, 23 Oct 2023 14:40:37 GMT\n";
-  httpResponse += "Content-Type: image/png\n";
-  httpResponse += "Content-Length:" + std::to_string(response.size()) + "\n";
-  httpResponse += "Accept-Ranges: bytes\n";
-  httpResponse += "Connection: close\n";
-  httpResponse += "\n";
-  httpResponse += response;
-
-  const char* httpResponseCStr = httpResponse.c_str();
-  if (send(client, httpResponseCStr, httpResponse.size(), 0) == SOCKET_ERROR){
-    return 1;
-  }
-  return 0;
-}
-
-
-int TinyAPIHttpServer :: SendHTTPImage(u_int client, std::string filepath){
-    std::cout<<"Sending File ... \n"; 
-    std::ifstream imageFile(filepath, std::ios::binary);
-    if (!imageFile) {
-        // throw std::runtime_error("Failed to open the image file");
-        return 1;
-    }
-    // Prepare an HTTP response with an image
-    std::string responseHeader = "HTTP/1.1 200 OK\r\n"
-                                  "Content-Type: image/jpeg\r\n"
-                                  "Content-Length: ";
-
-    imageFile.seekg(0, std::ios::end);
-    int imageLength = imageFile.tellg();
-    imageFile.seekg(0, std::ios::beg);
-    responseHeader += std::to_string(imageLength) + "\r\n\r\n";
-    send(client, responseHeader.c_str(), responseHeader.size(), 0);
-
-    char buffer[1024];
-    while (!imageFile.eof()) {
-      imageFile.read(buffer, sizeof(buffer));
-      send(client, buffer, imageFile.gcount(), 0);
-    }
-    return 0;
 }

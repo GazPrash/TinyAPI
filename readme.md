@@ -24,41 +24,67 @@ git clone https://github.com/yourusername/tiny-api.git
 2. **Build and Compile**:
 
 - Make sure you have a C++ compiler and the Winsock library installed.
-- Compile the project using your preferred compiler. For example, you can use g++ on Linux or Visual Studio on Windows.
+- Compile the project using your preferred compiler. For example, you can use g++ on Windows.
 
-3. **Define Your Endpoints**:
+3. **Setting up a new API!**:
 
-- In your C++ code, define the endpoints you want to handle using Tiny API.
+- Execute the Tiny API server to start recieving HTTP requests!
+```cpp
+  // Quickly setting up a minimal application
+  std::string localhost = "127.0.0.1";
+  TinyAPI *new_api = new TinyAPI(8000, 1024, 5, localhost);
+  if (new_api->initialize_server() == 1){
+    return 1;
+  }
+  new_api->HttpRequestHandler(&connector);
+  return 0;
+
+```
+
+4. **Routing**:
+
+- You can use meaningful URLs to help clients visiting your application. Just define the ```connector``` function in your code to handle different URL endpoints.
 
 ```cpp
 
-std::tuple<std::string, bool> connector(std::string endpoint){
+std::tuple<std::string, std::string> connector(std::string endpoint){
 /**
  * Handle all the necessary endpoints at one place!
  *
  * @param endpoint Requested endpoint by the user
- * @return tuple<response, is_binary> response and format of the response
+ * @return tuple<response, response_format> response(actual data) and format(text/html or image/png etc)
  */
-  cout << endpoint << endl;
   if (endpoint == "/home") return HomePage();
-  else if (endpoint == "/info") return AboutInfo();
-  else if (endpoint == "/pictures/gato"){
-    return gatoImage();
-  }
-  std::string err404 = "404 Not Found!";
-  return std::make_tuple(err404, false);
-}
-```
-4. **Start the server!**:
+  else if (endpoint == "/about") return AboutPage();
+  else if (endpoint == "/gato") return gatoImage();
 
-- Execute the Tiny API server to start recieving HTTP requests!
+  // You must ensure that this function returns from all of its execution paths
+  // so that no compilation error or undefined behaviour may happen.
+  // Create a custom 404 Message in case the user requests an unknown endpoint 
+  std::string err404 = "404 - Page Not Found!";
+  return std::make_tuple(err404, "text/html");
+}
+
+```
+Now all there left to do is to implement all the different functions for handling different routes such that
+each route is binded to a function.
+
 ```cpp
-  std::string localhost = "127.0.0.1";
-  TinyAPIHttpServer *server = new TinyAPIHttpServer(8000, 1024, 5, localhost);
-  if (server->initialize_server() == 1){
-    return 1;
-  }
-  server->AwaitHTTPRequest(&connector);
+// route = /about
+std::tuple<std::string, std::string> AboutPage(){
+  std::map<std::string, std::string> responseMap;
+  responseMap["Made by"] = "Sammy Zane";
+  responseMap["Total Downloads"] = "123,000+";
+  responseMap["Important links"] = "https://github.com/"; 
+
+  // If you are using a json file, then the JSON object must be converted to std::string format.
+  // If you're using std::map then you can use utility functions from helper.h to convert 
+  // your map<std::string, std::string> to std::string format.
+  // (It is recommended to use Json)
+  auto response = Helper::MapToString(responseMap);
+  auto responseTup = std::make_tuple(response, "text/html");
+  return responseTup;
+}
 
 ```
 

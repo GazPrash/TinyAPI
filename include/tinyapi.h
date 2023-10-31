@@ -19,7 +19,7 @@
 #endif
 
 
-class TinyAPIHttpServer{
+class TinyAPI{
   private:
     const int port;
     const int buffer_sz;
@@ -27,7 +27,7 @@ class TinyAPIHttpServer{
     // std::vector<SOCKET*> online_clients;
   public:
     WSADATA WSAData;
-    u_int ssocket; // socket file descriptor
+    u_int ssocket; // socket file descriptor of the HTTP server
     struct sockaddr_in ssocket_info;
     int maxRequestHandles;
     std::string HttpHeaderFormat;
@@ -35,8 +35,8 @@ class TinyAPIHttpServer{
     ServerUtils ServerUtils;
 
     // float server_wait_time;
-    TinyAPIHttpServer(int port, int buffer_sz, int maxConnections, std::string server_ip);
-    ~TinyAPIHttpServer();
+    TinyAPI(int port, int buffer_sz, int maxConnections, std::string server_ip);
+    ~TinyAPI();
     int initialize_server(bool bind_default = true);
     void HttpRequestHandler(std::tuple<std::string, std::string>(*connector_f)(std::string));
     int SendHttpResponse(u_int client, std::string response, std::string response_format);
