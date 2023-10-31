@@ -18,7 +18,7 @@ Tiny API is a minimalistic C++ library that allows you to build lightweight REST
 
 1. **Clone the Repository**: Clone this repository to your local machine using:
 ```bash
-git clone https://github.com/yourusername/tiny-api.git
+git clone https://github.com/GazPrash/TinyAPI.git
 ```
 
 2. **Build and Compile**:
