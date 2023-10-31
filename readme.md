@@ -26,10 +26,14 @@ git clone https://github.com/yourusername/tiny-api.git
 - Make sure you have a C++ compiler and the Winsock library installed.
 - Compile the project using your preferred compiler. For example, you can use g++ on Windows.
 
-3. **Setting up a new API!**:
+3. **Setting up a new API**:
 
-- Execute the Tiny API server to start recieving HTTP requests!
+- Instantiate the TinyAPI class in your driver function and start listening for HTTP requests!
 ```cpp
+// Include the tinyapi.h header at the top
+#include "include/tinyapi.h"
+
+int main(){
   // Quickly setting up a minimal application
   std::string localhost = "127.0.0.1";
   TinyAPI *new_api = new TinyAPI(8000, 1024, 5, localhost);
@@ -38,7 +42,7 @@ git clone https://github.com/yourusername/tiny-api.git
   }
   new_api->HttpRequestHandler(&connector);
   return 0;
-
+}
 ```
 
 4. **Routing**:
@@ -82,6 +86,7 @@ std::tuple<std::string, std::string> AboutPage(){
   // your map<std::string, std::string> to std::string format.
   // (It is recommended to use Json)
   auto response = Helper::MapToString(responseMap);
+  // the return must be a tuple<std::string, std::string> use #include<tuple> header for creating/using tuples.
   auto responseTup = std::make_tuple(response, "text/html");
   return responseTup;
 }
