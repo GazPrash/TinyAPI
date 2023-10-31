@@ -21,12 +21,7 @@ Tiny API is a minimalistic C++ library that allows you to build lightweight REST
 git clone https://github.com/GazPrash/TinyAPI.git
 ```
 
-2. **Build and Compile**:
-
-- Make sure you have a C++ compiler and the Winsock library installed.
-- Compile the project using your preferred compiler. For example, you can use g++ on Windows.
-
-3. **Setting up a new API**:
+2. **Setting up a new API**:
 
 - Instantiate the TinyAPI class in your driver function and start listening for HTTP requests!
 ```cpp
@@ -45,7 +40,7 @@ int main(){
 }
 ```
 
-4. **Routing**:
+3. **Routing**:
 
 - You can use meaningful URLs to help clients visiting your application. Just define the ```connector``` function in your code to handle different URL endpoints.
 
@@ -92,6 +87,12 @@ std::tuple<std::string, std::string> AboutPage(){
 }
 
 ```
+
+4. **Compile and run!**:
+
+- Make sure you have a C++ compiler and the Winsock library installed.
+- Compile the project using your preferred compiler. For example, you can use g++ on Windows.
+
 
 ## Contributions
 
