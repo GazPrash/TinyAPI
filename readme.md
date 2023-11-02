@@ -12,8 +12,6 @@ Tiny API is a minimalistic C++ library that allows you to build lightweight REST
 
 - **Support for Various Data Types**: Send and receive JSON, text data, audio and images.
 
-- **Ongoing Improvements**: We are actively working on making Tiny API multi-threaded for better concurrency and responsiveness.
-
 ## How to Use
 
 1. **Clone the Repository**: Clone this repository to your local machine using:
