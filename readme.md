@@ -10,7 +10,7 @@ Tiny API is a minimalistic C++ library that allows you to build lightweight REST
 
 - **Flexible Routing**: Define your API endpoints and handle them with custom logic.
 
-- **Support for Various Data Types**: Send and receive JSON, text data, and even images.
+- **Support for Various Data Types**: Send and receive JSON, text data, audio and images.
 
 - **Ongoing Improvements**: We are actively working on making Tiny API multi-threaded for better concurrency and responsiveness.
 
@@ -23,7 +23,7 @@ git clone https://github.com/GazPrash/TinyAPI.git
 
 2. **Setting up a new API**:
 
-- Instantiate the TinyAPI class in your driver function and start listening for HTTP requests!
+- Create a .cpp file and in the driver function Instantiate the TinyAPI class in your driver function and start listening for HTTP requests!
 ```cpp
 // Include the tinyapi.h header at the top
 #include "include/tinyapi.h"
@@ -91,7 +91,11 @@ std::tuple<std::string, std::string> AboutPage(){
 4. **Compile and run!**:
 
 - Make sure you have a C++ compiler and the Winsock library installed.
-- Compile the project using your preferred compiler. For example, you can use g++ on Windows.
+- Compile the your program and link it with ```-lws_32``` if you're on windows to use the Winsock library.
+
+```bash
+g++ -o example1_app.exe example1.cpp .\src\tinyapi.cpp -Iinclude -lws2_32  
+```
 
 
 ## Contributions
