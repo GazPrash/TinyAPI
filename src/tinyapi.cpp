@@ -1,18 +1,22 @@
 #include "../include/tinyapi.h"
 
-TinyAPI :: TinyAPI(int port, int buffer_sz, int maxConnections, std::string server_ip) : 
+TinyAPI :: TinyAPI(int port, int buffer_sz, int maxConnections, std::string server_ip, HOST_OS os) : 
     port(port),
     buffer_sz(buffer_sz)
   {
     maxRequestHandles = maxConnections;
     ip = server_ip;
+    current_os = os;
   }
 
 TinyAPI :: ~TinyAPI(){
   // write code for closing the main server socket and other cleanup
   std::cout << "Server Closing...\n";
   closesocket(ssocket);
-  WSACleanup();
+  if (current_os == HOST_OS::WIN){
+    WSACleanup();
+    std::cout<<"Winsock Cleanup Initiated.\n";
+  }
 }
 
 int TinyAPI :: initialize_server(bool bind_default){
@@ -24,13 +28,17 @@ int TinyAPI :: initialize_server(bool bind_default){
  * @return 0 if socket is created successfully else 1
  */
   int iResult;
-  // Initializing the Winsock Library.
-  iResult = WSAStartup(MAKEWORD(2,2), &WSAData);
-  if (iResult != 0) {
-      perror("WSAStartup Failed. Aborting server initialization.\n");
-      return 1;
+  if (current_os == HOST_OS::WIN){
+    // Initializing the Winsock Library.
+    iResult = WSAStartup(MAKEWORD(2,2), &WSAData);
+    if (iResult != 0) {
+        perror("WSAStartup Failed. Aborting server initialization.\n");
+        return 1;
+    }
+    std::cout<<"Winsock Initiated.\n";
   }
-
+  // No initialization required for Linux's socket library
+  
   ssocket = socket(AF_INET, SOCK_STREAM, 0);
   if (ssocket == INVALID_SOCKET){
     return 1;
@@ -42,7 +50,8 @@ int TinyAPI :: initialize_server(bool bind_default){
   ssocket_info.sin_port = htons(port);
 
   if (bind(ssocket, (const struct sockaddr *)&ssocket_info, sizeof(ssocket_info)) == SOCKET_ERROR){
-    std::cout<<WSAGetLastError();
+    // std::cout<<WSAGetLastError();
+    perror("Failed to bind server socket");
     return 1;
   }
   return 0;
@@ -61,12 +70,13 @@ void TinyAPI :: HttpRequestHandler(std::tuple<std::string, std::string> (*connec
 
   if (ssocket == INVALID_SOCKET){
     perror("Socket Not initialized.");
-    // return "";
+    return;
   }
   // listen(ssocket, maxRequestHandles);
   if ( listen(ssocket, SOMAXCONN) == SOCKET_ERROR){
-    std::cout << WSAGetLastError() << std::endl;
+    // std::cout << WSAGetLastError() << std::endl;
     perror( "Listen failed...Aborting.\n");
+    return;
     // return "";
   }
   std:: cout << "Server is now open for connection...[PORT:" << port << "]\n";

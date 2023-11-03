@@ -15,7 +15,9 @@
 // on windows systems
 # include <winsock2.h>  // Link with -lws2_32
 #else
-# include <sys/socket.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <sys/types.h>
 #endif
 
 
@@ -26,7 +28,11 @@ class TinyAPI{
     std::string ip;
     // std::vector<SOCKET*> online_clients;
   public:
-    WSADATA WSAData;
+    #ifdef __WIN32__
+      WSADATA WSAData;
+    #endif
+    enum class HOST_OS {WIN, LINUX};
+    HOST_OS current_os;
     u_int ssocket; // socket file descriptor of the HTTP server
     struct sockaddr_in ssocket_info;
     int maxRequestHandles;
@@ -35,7 +41,7 @@ class TinyAPI{
     ServerUtils ServerUtils;
 
     // float server_wait_time;
-    TinyAPI(int port, int buffer_sz, int maxConnections, std::string server_ip);
+    TinyAPI(int port, int buffer_sz, int maxConnections, std::string server_ip, HOST_OS os);
     ~TinyAPI();
     int initialize_server(bool bind_default = true);
     void HttpRequestHandler(std::tuple<std::string, std::string>(*connector_f)(std::string));

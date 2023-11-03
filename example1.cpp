@@ -1,8 +1,6 @@
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include "include/tinyapi.h"
 #include "include/helper.h"
+#include<tuple>
 
 
 // You can quickly define a function like this to convert images or any binary data into a string format.
@@ -25,16 +23,15 @@ std::tuple<std::string, std::string> HomePage(){
   return responseTup;
 }
 
-// route = /info
+// route = /about
 std::tuple<std::string, std::string> AboutPage(){
   std::map<std::string, std::string> responseMap;
-  responseMap["Author"] = "Arthur";
-  responseMap["Created"] = "2020";
-  responseMap["Github"] = "https://github.com/"; 
+  responseMap["Made by"] = "Sammy Zane";
+  responseMap["Total Downloads"] = "123,000+";
+  responseMap["Important links"] = "https://github.com/";
   auto response = Helper::MapToString(responseMap);
   auto responseTup = std::make_tuple(response, "text/html");
   return responseTup;
-
 }
 
 std::tuple<std::string, std::string> gatoImage(){
@@ -58,8 +55,8 @@ std::tuple<std::string, std::string> connector(std::string endpoint){
 int main(){
   // Quickly setting up an HTTP server at device's localhost 
   std::string localhost = "127.0.0.1";
-  TinyAPIHttpServer *server = new TinyAPIHttpServer(8000, 1024, 5, localhost);
-  if (server->initialize_server() == 1){
+  TinyAPI *new_api = new TinyAPI(8000, 1024, 5, localhost, TinyAPI::HOST_OS::WIN);
+  if (new_api->initialize_server() == 1){
     return 1;
   }
   // this method activates a listening cycle so that a server can 
@@ -71,7 +68,7 @@ int main(){
   // Connector function must return a string tuple such that :
   // First element is : text/json/binary in std::string format
   // And the second element should be : format of the data i.e text/html or image/png or image/jpeg 
-  server->HttpRequestHandler(&connector);
+  new_api->HttpRequestHandler(&connector);
   return 0;
 }
 
