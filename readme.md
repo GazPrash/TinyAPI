@@ -1,12 +1,12 @@
-# Tiny API - Rest API Framework for C++
+# TinyAPI - Rest API Framework for C++
 
-Tiny API is a minimalistic C++ library that allows you to build lightweight REST APIs using the Winsock library. With Tiny API, you can easily create and handle endpoints for sending JSON, text data, and even images. It's designed to be straightforward and user-friendly, allowing you to define the logic for your API endpoints, similar to modern web frameworks like Flask. No third party libraries were used to develop this API framework!
+TinyAPI is a minimalistic C++ library that allows you to build lightweight REST APIs. With TinyAPI, you can easily create and handle endpoints for sending JSON, text data, and even images. It's designed to be straightforward and user-friendly, allowing you to define the logic for your API endpoints, similar to modern web frameworks like Flask. No third party libraries were used to develop this API framework!
 
 ## Features
 
-- **Lightweight and Efficient**: Tiny API is designed for performance and efficiency.
+- **Lightweight and Efficient**: TinyAPI is designed for performance and efficiency.
 
-- **Easy Setup**: Getting started with Tiny API is simple, thanks to its clean and intuitive design.
+- **Easy Setup**: Getting started with TinyAPI is simple, thanks to its clean and intuitive design.
 
 - **Flexible Routing**: Define your API endpoints and handle them with custom logic.
 
@@ -29,7 +29,7 @@ git clone https://github.com/GazPrash/TinyAPI.git
 int main(){
   // Quickly setting up a minimal application
   std::string localhost = "127.0.0.1";
-  TinyAPI *new_api = new TinyAPI(8000, 1024, 5, localhost);
+  TinyAPI *new_api = new TinyAPI(8000, 1024, 5, localhost, TinyAPI::HOST_OS::WIN);
   if (new_api->initialize_server() == 1){
     return 1;
   }
@@ -98,7 +98,7 @@ g++ -o example1_app.exe example1.cpp .\src\tinyapi.cpp -Iinclude -lws2_32
 
 ## Contributions
 
-Contributions are welcome! If you'd like to contribute to Tiny API, please follow these steps:
+Contributions are welcome! If you'd like to contribute to TinyAPI, please follow these steps:
 
 1. **Fork the repository on GitHub**.
 2. **Clone your fork locally**.
@@ -108,4 +108,4 @@ Contributions are welcome! If you'd like to contribute to Tiny API, please follo
 
 ## Ongoing Improvements
 
-I'm actively working on making Tiny API even better. THe next big step is to introduce multi-threading support for enhanced performance and concurrency. At the moment, I've implemented the HTTP Server using Winsock library, which is designed for socket programming on Windows devices. In the future, I will try to create a version of the library that's compatible with Linux, making it accessible to a broader user base.
+I'm actively working on making TinyAPI even better. THe next big step is to introduce multi-threading support for enhanced performance and concurrency. At the moment, I've implemented the HTTP Server using Winsock library, which is designed for socket programming on Windows devices. In the future, I will try to create a version of the library that's compatible with Linux, making it accessible to a broader user base.
