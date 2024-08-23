@@ -108,4 +108,4 @@ Contributions are welcome! If you'd like to contribute to TinyAPI, please follow
 
 ## Ongoing Improvements
 
-I'm actively working on making TinyAPI even better. THe next big step is to introduce multi-threading support for enhanced performance and concurrency. At the moment, I've implemented the HTTP Server using Winsock library, which is designed for socket programming on Windows devices. In the future, I will try to create a version of the library that's compatible with Linux, making it accessible to a broader user base.
+I'm actively working on making TinyAPI even better. THe next big step is to introduce multi-threading support for enhanced performance and concurrency, add encoding support for serving media files, and more.
