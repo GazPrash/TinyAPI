@@ -106,6 +106,6 @@ Contributions are welcome! If you'd like to contribute to TinyAPI, please follow
 4. **Commit your changes and push to your fork**.
 5. **Create a pull request on the main repository**.
 
-## Ongoing Improvements
+## Future Improvements
 
 I'm actively working on making TinyAPI even better. THe next big step is to introduce multi-threading support for enhanced performance and concurrency, add encoding support for serving media files, and more.
