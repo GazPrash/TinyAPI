@@ -108,4 +108,4 @@ Contributions are welcome! If you'd like to contribute to TinyAPI, please follow
 
 ## Ongoing Improvements
 
-I'm actively working on making TinyAPI even better. THe next big step is to introduce multi-threading support for enhanced performance and concurrency, add encoding support for serving media files, and more.
+I'm actively working on making TinyAPI even better. The next big step is to introduce multi-threading support for enhanced performance and concurrency, add encoding support for serving media files (currently Images are supported), and more.
