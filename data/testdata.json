@@ -1,0 +1,227 @@
+[
+  {
+    "_id": "66cde23612e9213405c5f4a8",
+    "index": 0,
+    "guid": "8c9fa065-7b28-46da-9a28-341ceefbfa4f",
+    "isActive": false,
+    "balance": "$2,117.32",
+    "picture": "http://placehold.it/32x32",
+    "age": 27,
+    "eyeColor": "green",
+    "name": "Alford Rich",
+    "gender": "male",
+    "company": "PHEAST",
+    "email": "alfordrich@pheast.com",
+    "phone": "+1 (873) 458-3738",
+    "address": "283 Lawrence Avenue, Williams, Michigan, 5922",
+    "about": "Nulla id commodo laborum ullamco anim dolor aute pariatur non deserunt. Sit eu duis culpa aliqua laboris amet ad do veniam. Sint eu laboris excepteur occaecat. Eu do sint ad id culpa ut duis. Consectetur anim ut enim irure est proident pariatur proident quis ipsum. Magna reprehenderit enim laborum ullamco cillum laboris dolore cillum cupidatat ut ut aliquip et. Adipisicing proident non mollit proident eu dolor velit do ipsum commodo consequat sunt aute.\r\n",
+    "registered": "2022-03-24T11:40:23 -06:-30",
+    "latitude": 10.933034,
+    "longitude": -160.486082,
+    "tags": [
+      "occaecat",
+      "minim",
+      "est",
+      "duis",
+      "ad",
+      "irure",
+      "aliqua"
+    ],
+    "friends": [
+      {
+        "id": 0,
+        "name": "Carlene Curry"
+      },
+      {
+        "id": 1,
+        "name": "Spears Stewart"
+      },
+      {
+        "id": 2,
+        "name": "Griffin Peters"
+      }
+    ],
+    "greeting": "Hello, Alford Rich! You have 7 unread messages.",
+    "favoriteFruit": "banana"
+  },
+  {
+    "_id": "66cde236fdd1971a7aabe1c5",
+    "index": 1,
+    "guid": "6b727d47-dc7b-4f7c-a402-685cd9398136",
+    "isActive": false,
+    "balance": "$3,591.55",
+    "picture": "http://placehold.it/32x32",
+    "age": 23,
+    "eyeColor": "brown",
+    "name": "Jarvis Pate",
+    "gender": "male",
+    "company": "COMTENT",
+    "email": "jarvispate@comtent.com",
+    "phone": "+1 (902) 574-2800",
+    "address": "542 Cheever Place, Worcester, New Mexico, 3158",
+    "about": "Enim ipsum eiusmod ut sunt. Exercitation consequat laborum cillum et minim esse excepteur laboris non nostrud. Laborum irure eu aliquip occaecat aute cupidatat cupidatat ex sint minim dolor reprehenderit.\r\n",
+    "registered": "2023-08-27T10:41:52 -06:-30",
+    "latitude": -40.213621,
+    "longitude": 159.254822,
+    "tags": [
+      "est",
+      "laboris",
+      "in",
+      "aliqua",
+      "fugiat",
+      "elit",
+      "id"
+    ],
+    "friends": [
+      {
+        "id": 0,
+        "name": "Mendez Hudson"
+      },
+      {
+        "id": 1,
+        "name": "Carol Cline"
+      },
+      {
+        "id": 2,
+        "name": "Katelyn Powers"
+      }
+    ],
+    "greeting": "Hello, Jarvis Pate! You have 8 unread messages.",
+    "favoriteFruit": "banana"
+  },
+  {
+    "_id": "66cde236b70493b37f83fa0f",
+    "index": 2,
+    "guid": "65c258e7-c8f0-461c-beff-d2d1369baf5b",
+    "isActive": false,
+    "balance": "$2,047.41",
+    "picture": "http://placehold.it/32x32",
+    "age": 35,
+    "eyeColor": "brown",
+    "name": "Roberta Blankenship",
+    "gender": "female",
+    "company": "MEMORA",
+    "email": "robertablankenship@memora.com",
+    "phone": "+1 (846) 415-2825",
+    "address": "918 Campus Road, Brecon, Oklahoma, 3803",
+    "about": "Ea quis Lorem ipsum aute et qui duis dolore nisi amet ex. Cupidatat qui tempor ullamco est culpa nulla consectetur nostrud. Sunt culpa amet mollit dolore ullamco fugiat sint.\r\n",
+    "registered": "2023-12-29T08:22:56 -06:-30",
+    "latitude": -62.181073,
+    "longitude": -103.907796,
+    "tags": [
+      "non",
+      "occaecat",
+      "Lorem",
+      "consequat",
+      "sit",
+      "id",
+      "ut"
+    ],
+    "friends": [
+      {
+        "id": 0,
+        "name": "Nettie Montoya"
+      },
+      {
+        "id": 1,
+        "name": "Valeria Ruiz"
+      },
+      {
+        "id": 2,
+        "name": "Lorene Patterson"
+      }
+    ],
+    "greeting": "Hello, Roberta Blankenship! You have 6 unread messages.",
+    "favoriteFruit": "apple"
+  },
+  {
+    "_id": "66cde236a1551ab288ce42fb",
+    "index": 3,
+    "guid": "462bd2b9-e764-4bcf-81c1-14e9ff0a4ec0",
+    "isActive": true,
+    "balance": "$3,366.27",
+    "picture": "http://placehold.it/32x32",
+    "age": 28,
+    "eyeColor": "brown",
+    "name": "Raymond Le",
+    "gender": "male",
+    "company": "IZZBY",
+    "email": "raymondle@izzby.com",
+    "phone": "+1 (913) 458-2279",
+    "address": "701 Jackson Street, Craig, New Hampshire, 8642",
+    "about": "Commodo elit sunt quis veniam aliqua reprehenderit eiusmod anim. Ex Lorem exercitation eu do eu reprehenderit enim mollit sit veniam excepteur. Non aliquip nisi eu minim in dolor consectetur cillum enim pariatur dolore.\r\n",
+    "registered": "2016-01-08T01:39:15 -06:-30",
+    "latitude": -5.242195,
+    "longitude": 70.537461,
+    "tags": [
+      "labore",
+      "irure",
+      "nostrud",
+      "consectetur",
+      "anim",
+      "dolor",
+      "irure"
+    ],
+    "friends": [
+      {
+        "id": 0,
+        "name": "Jeri Valdez"
+      },
+      {
+        "id": 1,
+        "name": "Jordan Reid"
+      },
+      {
+        "id": 2,
+        "name": "Hilda Matthews"
+      }
+    ],
+    "greeting": "Hello, Raymond Le! You have 3 unread messages.",
+    "favoriteFruit": "apple"
+  },
+  {
+    "_id": "66cde236e0573abc70a83ce4",
+    "index": 4,
+    "guid": "ba711c38-2bdb-4b35-8956-2315383afb5c",
+    "isActive": true,
+    "balance": "$3,221.19",
+    "picture": "http://placehold.it/32x32",
+    "age": 37,
+    "eyeColor": "brown",
+    "name": "Tonya Bullock",
+    "gender": "female",
+    "company": "PLASMOS",
+    "email": "tonyabullock@plasmos.com",
+    "phone": "+1 (852) 482-3390",
+    "address": "923 Karweg Place, Libertytown, Missouri, 3097",
+    "about": "Eiusmod proident eiusmod sunt esse magna adipisicing et fugiat nisi sit. Velit magna ea esse Lorem excepteur sit cillum in sunt deserunt tempor. Pariatur pariatur enim sunt et veniam duis. Est deserunt cupidatat occaecat ut Lorem eiusmod id ex.\r\n",
+    "registered": "2019-11-30T05:04:42 -06:-30",
+    "latitude": 13.398695,
+    "longitude": -114.832914,
+    "tags": [
+      "labore",
+      "deserunt",
+      "irure",
+      "occaecat",
+      "eu",
+      "duis",
+      "nisi"
+    ],
+    "friends": [
+      {
+        "id": 0,
+        "name": "Moses Carter"
+      },
+      {
+        "id": 1,
+        "name": "Lola Barker"
+      },
+      {
+        "id": 2,
+        "name": "Serrano Spencer"
+      }
+    ],
+    "greeting": "Hello, Tonya Bullock! You have 7 unread messages.",
+    "favoriteFruit": "apple"
+  }
+]
