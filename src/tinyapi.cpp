@@ -91,6 +91,7 @@ void TinyAPI ::HttpRequestHandler(
 
   // std:: cout << "Connection Established. Waiting for incoming requests.\n";
 
+  // TODO : Add a server timeout instead of infiinite while loop
   char requestBuffer[buffer_sz];
   while (1) {
     /*client = accept(ssocket, (struct sockaddr *)&client_addr,
