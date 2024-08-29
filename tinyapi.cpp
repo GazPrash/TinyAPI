@@ -1,4 +1,4 @@
-#include "../include/tinyapi.h"
+#include "tinyapi.h"
 #include <cstring>
 #include <sys/socket.h>
 #include <unistd.h>
