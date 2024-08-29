@@ -73,7 +73,7 @@ void TinyAPI ::HttpRequestHandler(
    * @return 0 if socket is connection is established successfully else 1
    */
   u_int client;
-  int client_addr_len;
+  int clint_addr_len;
   struct sockaddr_in client_addr;
 
   if (ssocket < 0) {
