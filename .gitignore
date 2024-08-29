@@ -1,2 +1,4 @@
 example_testing.cpp
 example_test_app.exe
+build/
+.cache/
