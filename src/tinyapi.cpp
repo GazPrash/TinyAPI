@@ -3,6 +3,9 @@
 #include <cstddef>
 #include <cstring>
 #include <iostream>
+#include <ostream>
+#include <sstream>
+#include <string>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -84,12 +87,9 @@ void TinyAPI ::HttpRequestHandler(
     perror("Socket Not initialized.");
     return;
   }
-  // listen(ssocket, maxRequestHandles);
   if (listen(ssocket, SOMAXCONN) < 0) {
-    // std::cout << WSAGetLastError() << std::endl;
     perror("Listen failed...Aborting.\n");
     return;
-    // return "";
   }
 
   struct timeval serv_timeout;
@@ -112,49 +112,70 @@ void TinyAPI ::HttpRequestHandler(
       std::cerr << "Server Timed out! (ET : " << server_timeout << " ms) \n";
       break;
     }
-    /*client = accept(ssocket, (struct sockaddr *)&client_addr,
-     * &client_addr_len);*/
     socklen_t client_addr_len = sizeof(client_addr);
     client = accept(ssocket, (struct sockaddr *)&client_addr, &client_addr_len);
     if (client < 0) {
-      perror("Couldn't establish connection with the client.");
-      // return "";
+      std::cerr << "Couldn't establish connection with the client. \n";
     }
-    // std:: cout << "New Connection Established. Waiting for incoming
     // requests.\n";
     int bytesRead = recv(client, requestBuffer, sizeof(requestBuffer), 0);
-    if (bytesRead > 0) {
-      // Convert received data to a string
-      std::string httpRequest(requestBuffer, bytesRead);
-      // Parse the HTTP request to extract the requested URL
-      std::istringstream requestStream(httpRequest);
-      std::string requestLine;
-      std::getline(requestStream, requestLine);
-      // Extract the URL from the request line
-      std::istringstream requestLineStream(requestLine);
-      std::string method, url_endpoint, http_version;
-      requestLineStream >> method >> url_endpoint >> http_version;
-
-      // TODO : Add Logging
-      std::cout << "New GET Request! - " << url_endpoint
-                << " Version : " << http_version << "\n";
-      std::tuple<std::string, std::string> responseTup =
-          connector_f(url_endpoint);
-      std::string response = std::get<0>(responseTup);
-      std::string response_format = std::get<1>(responseTup);
-      SendHttpResponse(client, response, response_format);
-      memset(requestBuffer, 0, sizeof(requestBuffer));
-      // delete[] requestBuffer;
+    if (bytesRead < 0) {
+      continue;
     }
+    // Null termination for avoiding offerflow (bytesRead <= 4096). This
+    // should almost never ever happen but just ensuring that requestBuffer is
+    // null terminated
+    if (bytesRead >= buffer_sz) {
+      std::cerr << "413 - Payload too large" << std::endl;
+      SendHttpResponse(client, "Payload Exceeded", "text/plain",
+                       "HTTP/1.1 413 Payload Too Large\r\n");
+      continue;
+    } else {
+      requestBuffer[bytesRead] = '\0';
+    }
+    // Convert received data to a string
+    std::string httpRequest(requestBuffer, bytesRead);
+    std::cout << httpRequest << std::endl;
+    // Parse the HTTP request to extract the requested URL
+    std::istringstream requestStream(httpRequest);
+    std::string requestLine;
+    if (!std::getline(requestStream, requestLine)) {
+      std::cerr << "Invalid request" << std::endl;
+      SendHttpResponse(client, "400 - Bad Request", "text/plain",
+                       "HTTP/1.1 400 Bad Request\r\n");
+      continue;
+    }
+    // Extract the URL from the request line
+    std::istringstream requestLineStream(requestLine);
+    std::string method, url_endpoint, http_version;
+    requestLineStream >> method >> url_endpoint >> http_version;
+
+    if (method != "GET") {
+      std::cerr << "Unsupported HTTP method" << std::endl;
+      SendHttpResponse(client, "405 - Method Not Allowed", "text/plain",
+                       "HTTP/1.1 405 Method Not Allowed\r\n");
+      continue;
+    }
+    // TODO : Add Logging
+    std::cout << "New GET Request! - " << url_endpoint
+              << " Version : " << http_version << "\n";
+    std::tuple<std::string, std::string> responseTup =
+        connector_f(url_endpoint);
+    std::string response = std::get<0>(responseTup);
+    std::string response_format = std::get<1>(responseTup);
+    SendHttpResponse(client, response, response_format);
+    memset(requestBuffer, 0, sizeof(requestBuffer));
   }
-  // const std::string std_reply = "This is a standard reply.";
 }
 
 int TinyAPI ::SendHttpResponse(u_int client, std::string response,
-                               std::string response_format) {
-  std::string httpResponse = "HTTP/1.1 200 OK\n";
+                               std::string response_format,
+                               std::string httpResponseCode) {
+
+  std::string httpResponse = "";
+  httpResponse += httpResponseCode;
+  /*std::string httpResponse = "HTTP/1.1 200 OK\n";*/
   httpResponse += serverUtils.getCurDate();
-  // httpResponse += "Last-Modified: Mon, 23 Oct 2023 14:40:37 GMT\n";
   httpResponse += "Content-Type: " + response_format + "\n";
   httpResponse += "Content-Length:" + std::to_string(response.size()) + "\n";
   httpResponse += "Accept-Ranges: bytes\n";

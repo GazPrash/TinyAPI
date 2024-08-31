@@ -4,13 +4,8 @@
 #include "server_utils.h"
 #include <cstddef>
 #include <ctime>
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <sstream>
 #include <string>
 #include <tuple>
-#include <vector>
 
 #ifdef __WIN32__
 // on windows systems
@@ -52,7 +47,8 @@ public:
   void HttpRequestHandler(
       std::tuple<std::string, std::string> (*connector_f)(std::string));
   int SendHttpResponse(u_int client, std::string response,
-                       std::string response_format);
+                       std::string response_format,
+                       std::string httpResponseCode = "HTTP/1.1 200 OK\n");
   // std::string mapStringify()
 };
 
