@@ -2,6 +2,7 @@
 #define TINYAPI_H
 
 #include "server_utils.h"
+#include <cstddef>
 #include <ctime>
 #include <fstream>
 #include <iostream>
@@ -28,6 +29,7 @@ private:
   const int port;
   const int buffer_sz;
   std::string ip;
+  const size_t server_timeout;
   // std::vector<SOCKET*> online_clients;
 public:
 #ifdef __WIN32__
@@ -44,7 +46,7 @@ public:
 
   // float server_wait_time;
   TinyAPI(int port, int buffer_sz, int maxConnections, std::string server_ip,
-          HOST_OS os);
+          size_t server_timeout, HOST_OS os);
   ~TinyAPI();
   int initialize_server(bool bind_default = true);
   void HttpRequestHandler(

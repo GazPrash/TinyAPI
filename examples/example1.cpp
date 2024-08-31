@@ -1,5 +1,6 @@
-#include "include/helper.h"
-#include "include/tinyapi.h"
+#include "helper.h"
+#include "tinyapi.h"
+#include <cstddef>
 #include <iostream>
 #include <ostream>
 #include <string>
@@ -70,8 +71,9 @@ std::tuple<std::string, std::string> connector(std::string endpoint) {
 int main() {
   // Quickly setting up an HTTP server at device's localhost
   std::string localhost = "127.0.0.1";
+  size_t timeout = 14500; // 14.5s
   TinyAPI *new_api =
-      new TinyAPI(8000, 1024, 5, localhost, TinyAPI::HOST_OS::WIN);
+      new TinyAPI(8000, 1024, 5, localhost, timeout, TinyAPI::HOST_OS::WIN);
   /*std::cout << &new_api << std::endl;*/
   if (new_api->initialize_server() == 1) {
     return 1;

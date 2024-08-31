@@ -9,7 +9,6 @@
 #include <map>
 #include <sstream>
 #include <string>
-#include <unordered_map>
 
 namespace Helper {
 std::string MapToString(const std::map<std::string, std::string> dataMap) {
@@ -29,7 +28,6 @@ std::string MapToString(const std::map<std::string, std::string> dataMap) {
 }
 
 std::string jsonToString(const std::string filepath) {
-  std::string jsonFilePath = "path_to_your_json_file.json";
   std::ifstream jsonFile(filepath);
   if (!jsonFile.is_open()) {
     std::cerr << "Failed to open the JSON file." << std::endl;

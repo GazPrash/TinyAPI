@@ -1,11 +1,15 @@
 #include "tinyapi.h"
+#include <bits/types/struct_timeval.h>
+#include <cstddef>
 #include <cstring>
+#include <iostream>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <unistd.h>
 
 TinyAPI ::TinyAPI(int port, int buffer_sz, int maxConnections,
-                  std::string server_ip, HOST_OS os)
-    : port(port), buffer_sz(buffer_sz) {
+                  std::string server_ip, size_t server_timeout, HOST_OS os)
+    : port(port), buffer_sz(buffer_sz), server_timeout(server_timeout) {
   maxRequestHandles = maxConnections;
   ip = server_ip;
   current_os = os;
@@ -87,13 +91,27 @@ void TinyAPI ::HttpRequestHandler(
     return;
     // return "";
   }
-  std::cout << "Server is now open for connection...[PORT:" << port << "]\n";
 
-  // std:: cout << "Connection Established. Waiting for incoming requests.\n";
+  struct timeval serv_timeout;
+  size_t server_timeout_sec = server_timeout / 1000; // ms to seconds
+  serv_timeout.tv_sec = server_timeout_sec;
+  serv_timeout.tv_usec = 500000;
+  // Limiting the Server Socket to the timeout provided by the user | Controlled
+  // Timeouts
+  setsockopt(ssocket, SOL_SOCKET, SO_RCVTIMEO, (const char *)&serv_timeout,
+             sizeof(serv_timeout));
+
+  time_t server_start_time = time(NULL);
+  std::cout << "Server is now open for connection...[PORT:" << port << "]\n";
 
   // TODO : Add a server timeout instead of infiinite while loop
   char requestBuffer[buffer_sz];
   while (1) {
+    time_t current_time = time(NULL);
+    if (difftime(current_time, server_start_time) >= server_timeout_sec) {
+      std::cerr << "Server Timed out! (ET : " << server_timeout << " ms) \n";
+      break;
+    }
     /*client = accept(ssocket, (struct sockaddr *)&client_addr,
      * &client_addr_len);*/
     socklen_t client_addr_len = sizeof(client_addr);
@@ -116,7 +134,10 @@ void TinyAPI ::HttpRequestHandler(
       std::istringstream requestLineStream(requestLine);
       std::string method, url_endpoint, http_version;
       requestLineStream >> method >> url_endpoint >> http_version;
-      std::cout << "New GET Request! - " << url_endpoint << "\n";
+
+      // TODO : Add Logging
+      std::cout << "New GET Request! - " << url_endpoint
+                << " Version : " << http_version << "\n";
       std::tuple<std::string, std::string> responseTup =
           connector_f(url_endpoint);
       std::string response = std::get<0>(responseTup);
