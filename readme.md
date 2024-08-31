@@ -1,16 +1,16 @@
 # TinyAPI - Rest API Framework for C++
 
-TinyAPI is a minimalistic C++ library that allows you to build lightweight REST APIs. With TinyAPI, you can easily create and handle endpoints for sending JSON, text data, and even images. It's designed to be straightforward and user-friendly, allowing you to define the logic for your API endpoints, similar to modern web frameworks like Flask. No third party libraries were used to develop this API framework!
+TinyAPI is a minimalistic C++ library that allows you to build lightweight REST APIs. Designed to be a bare-bones framework for quickly setting up HTTP Servers or API Clients. Setting up a server is straightforward and user-friendly, allowing you to define the logic for your API endpoints, similar to modern web frameworks like Flask. No third party libraries were used to develop this API framework!
 
 ## Features
 
 - **Lightweight and Efficient**: TinyAPI is designed for performance and efficiency.
 
-- **Easy Setup**: Getting started with TinyAPI is simple, thanks to its clean and intuitive design.
+- **Easily Setup API Clients**: Getting started with TinyAPI is simple, thanks to its clean and intuitive design.
 
 - **Flexible Routing**: Define your API endpoints and handle them with custom logic.
 
-- **Support for Various Data Types**: Send and receive JSON, text data, audio and images.
+<!-- - **Support for **: Send and receive JSON, audio and images. -->
 
 ## How to Use
 
@@ -26,13 +26,26 @@ git clone https://github.com/GazPrash/TinyAPI.git
 // Include the tinyapi.h header at the top
 #include "include/tinyapi.h"
 
-int main(){
-  // Quickly setting up a minimal application
+int main() {
+  // Quickly setting up an HTTP server at device's localhost
   std::string localhost = "127.0.0.1";
-  TinyAPI *new_api = new TinyAPI(8000, 1024, 5, localhost, TinyAPI::HOST_OS::WIN);
-  if (new_api->initialize_server() == 1){
+  size_t timeout = 14500; // 14.5s
+  TinyAPI *new_api =
+      new TinyAPI(8000, 1024, 5, localhost, timeout, TinyAPI::HOST_OS::LINUX);
+  /*std::cout << &new_api << std::endl;*/
+  if (new_api->initialize_server() == 1) {
     return 1;
   }
+  // this method activates a listening cycle so that a server can
+  // recieve and respond to multiple client requests.
+  // You must create a "connector" function that returns a string tuple
+  // The connector function must have all the logic regarding how a given
+  // request must be handled you can create different functions for handling
+  // different requests based on different routes so that you can tell TinyAPI
+  // what URL should trigger this function! Connector function must return a
+  // string tuple such that : First element is : text/json/binary in std::string
+  // format And the second element should be : format of the data i.e text/html
+  // or image/png or image/jpeg
   new_api->HttpRequestHandler(&connector);
   return 0;
 }
@@ -44,21 +57,18 @@ int main(){
 
 ```cpp
 
-std::tuple<std::string, std::string> connector(std::string endpoint){
-/**
- * Handle all the necessary endpoints at one place!
- *
- * @param endpoint Requested endpoint by the user
- * @return tuple<response, response_format> response(actual data) and format(text/html or image/png etc)
- */
-  if (endpoint == "/home") return HomePage();
-  else if (endpoint == "/about") return AboutPage();
-  else if (endpoint == "/gato") return gatoImage();
+std::tuple<std::string, std::string> connector(std::string endpoint) {
+  if (endpoint == "/home")
+    return HomePage();
+  else if (endpoint == "/gatowallpaper")
+    return gatoWallpaper();
+  else if (endpoint == "/clientData")
+    return getClientData();
 
+  // Create a custom 404 Message in case the user requests an unknown endpoint
   // You must ensure that this function returns from all of its execution paths
   // so that no compilation error or undefined behaviour may happen.
-  // Create a custom 404 Message in case the user requests an unknown endpoint 
-  std::string err404 = "404 - Page Not Found!";
+  std::string err404 = "Page Not Found!";
   return std::make_tuple(err404, "text/html");
 }
 
@@ -67,19 +77,27 @@ Now all there left to do is to implement all the different functions for handlin
 each route is binded to a function.
 
 ```cpp
-// route = /about
-std::tuple<std::string, std::string> AboutPage(){
+/route ='/home'
+std::tuple<std::string, std::string> HomePage() {
   std::map<std::string, std::string> responseMap;
-  responseMap["Made by"] = "Sammy Zane";
-  responseMap["Total Downloads"] = "123,000+";
-  responseMap["Important links"] = "https://github.com/"; 
-
-  // If you are using a json file, then the JSON object must be converted to std::string format.
-  // If you're using std::map then you can use utility functions from helper.h to convert 
-  // your map<std::string, std::string> to std::string format.
-  // (It is recommended to use Json)
+  responseMap["Greet"] = "Welcome Home!";
   auto response = Helper::MapToString(responseMap);
-  // the return must be a tuple<std::string, std::string> use #include<tuple> header for creating/using tuples.
+  auto responseTup = std::make_tuple(response, "text/html");
+  return responseTup;
+}
+
+// route='/gatowallpaper'
+std::tuple<std::string, std::string> gatoWallpaper() {
+  const std::string GATO_IMG_PATH = "images/gato.png";
+  std::string imgContent = readImageFile(GATO_IMG_PATH);
+  auto responseTup = std::make_tuple(imgContent, "image/png");
+  return responseTup;
+}
+
+// route='/clientData'
+std::tuple<std::string, std::string> getClientData() {
+  const std::string dataPath = "test/data/testdata.json";
+  auto response = Helper::jsonToString(dataPath);
   auto responseTup = std::make_tuple(response, "text/html");
   return responseTup;
 }
@@ -88,12 +106,24 @@ std::tuple<std::string, std::string> AboutPage(){
 
 4. **Compile and run!**:
 
-- Make sure you have a C++ compiler and the Winsock library installed.
-- Compile the your program and link it with ```-lws_32``` if you're on windows to use the Winsock library.
+- Make sure you have a C++ compiler and CMAKE (minimum ver 3.2) is installed.
+
+4.1 Create a build directory and run the cmake command, followed by the make command to finalize the build.
 
 ```bash
-g++ -o example1_app.exe example1.cpp .\src\tinyapi.cpp -Iinclude -lws2_32  
+mkdir -p build
+cd build
+cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=OFF
+make
 ```
+
+4.2 Link the generated `libTinyApi.a` static library when compiling your `<your_web_app_name>.cpp` file as follows:
+
+```bash
+g++ <your_web_app_name>.cpp -o <your_web_app_name> -Iinclude -L build/ -lTinyApi
+```
+
+4.3 Alternatively, you can run the `buildexample.sh` file to quickly build the static library and setup a test example web server (`example_app1.o`) on the go. You can add your routes and data by updating the file `example_app1.cpp` that can be found in the `example` directory.
 
 
 ## Contributions

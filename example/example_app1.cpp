@@ -1,5 +1,8 @@
-#include "helper.h"
-#include "tinyapi.h"
+// Compile :
+// g++ example_testing.cpp -o testing_app -Iinclude -L build/ -lTinyApi
+
+#include "../include/helper.h"
+#include "../include/tinyapi.h"
 #include <cstddef>
 #include <iostream>
 #include <ostream>
@@ -9,6 +12,7 @@
 // You can quickly define a function like this to convert images or any binary
 // data into a string format.
 std::string readImageFile(const std::string &filename) {
+  std::cout << filename << std::endl;
   std::ifstream file(filename, std::ios::binary);
   if (!file) {
     throw std::runtime_error("Failed to open the image file");
@@ -46,7 +50,7 @@ std::tuple<std::string, std::string> gatoImage() {
 }
 
 std::tuple<std::string, std::string> getData() {
-  const std::string dataPath = "data/testdata.json";
+  const std::string dataPath = "test/data/testdata.json";
   auto response = Helper::jsonToString(dataPath);
   auto responseTup = std::make_tuple(response, "text/html");
   return responseTup;
@@ -71,9 +75,9 @@ std::tuple<std::string, std::string> connector(std::string endpoint) {
 int main() {
   // Quickly setting up an HTTP server at device's localhost
   std::string localhost = "127.0.0.1";
-  size_t timeout = 14500; // 14.5s
+  size_t timeout = 1450000; // 14.5 * 100s
   TinyAPI *new_api =
-      new TinyAPI(8000, 1024, 5, localhost, timeout, TinyAPI::HOST_OS::WIN);
+      new TinyAPI(8000, 1024, 5, localhost, timeout, TinyAPI::HOST_OS::LINUX);
   /*std::cout << &new_api << std::endl;*/
   if (new_api->initialize_server() == 1) {
     return 1;

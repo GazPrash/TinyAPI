@@ -5,4 +5,4 @@ cd build
 cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=OFF
 make
 cd ..
-g++ example_testing.cpp -o testing_app -Iinclude -L build/ -lTinyApi
+g++ example/example_app1.cpp -o example_app1 -Iinclude -L build/ -lTinyApi

@@ -95,9 +95,9 @@ void TinyAPI ::HttpRequestHandler(
   struct timeval serv_timeout;
   size_t server_timeout_sec = server_timeout / 1000; // ms to seconds
   serv_timeout.tv_sec = server_timeout_sec;
-  serv_timeout.tv_usec = 500000;
-  // Limiting the Server Socket to the timeout provided by the user | Controlled
-  // Timeouts
+  serv_timeout.tv_usec = 500000; // microseconds
+  // Limiting the Server Socket to the timeout provided by
+  // the user Controlled Timeouts
   setsockopt(ssocket, SOL_SOCKET, SO_RCVTIMEO, (const char *)&serv_timeout,
              sizeof(serv_timeout));
 
