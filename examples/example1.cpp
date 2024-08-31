@@ -1,5 +1,5 @@
-#include "helper.h"
-#include "tinyapi.h"
+#include "../include/helper.h"
+#include "../include/tinyapi.h"
 #include <cstddef>
 #include <iostream>
 #include <ostream>
