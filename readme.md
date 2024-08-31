@@ -107,7 +107,6 @@ std::tuple<std::string, std::string> getClientData() {
 4. **Compile and run!**:
 
 - Make sure you have a C++ compiler and CMAKE (minimum ver 3.2) is installed.
-
   - 4.1 Create a build directory and run the cmake command, followed by the make command to finalize the build.
 
 ```bash
