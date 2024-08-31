@@ -1,6 +1,6 @@
 # TinyAPI - Rest API Framework for C++
 
-TinyAPI is a minimalistic C++ library that allows you to build lightweight REST APIs. Designed to be a bare-bones framework for quickly setting up HTTP Servers or API Clients. Setting up a server is straightforward and user-friendly, allowing you to define the logic for your API endpoints, similar to modern web frameworks like Flask. No third party libraries were used to develop this API framework!
+TinyAPI is a minimalistic C++ library that allows you to build lightweight REST APIs. Designed to be a bare-bones framework for quickly setting up HTTP Servers or API Clients. Setting up a server is straightforward and user-friendly, allowing you to define the logic for your API endpoints, similar to modern web frameworks like Flask. No third party libraries were used to develop this API framework! (currently only supported on Linux)
 
 ## Features
 
@@ -108,7 +108,7 @@ std::tuple<std::string, std::string> getClientData() {
 
 - Make sure you have a C++ compiler and CMAKE (minimum ver 3.2) is installed.
 
-4.1 Create a build directory and run the cmake command, followed by the make command to finalize the build.
+  - 4.1 Create a build directory and run the cmake command, followed by the make command to finalize the build.
 
 ```bash
 mkdir -p build
@@ -117,13 +117,13 @@ cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=OFF
 make
 ```
 
-4.2 Link the generated `libTinyApi.a` static library when compiling your `<your_web_app_name>.cpp` file as follows:
+  - 4.2 Link the generated `libTinyApi.a` static library when compiling your `<your_web_app_name>.cpp` file as follows:
 
 ```bash
 g++ <your_web_app_name>.cpp -o <your_web_app_name> -Iinclude -L build/ -lTinyApi
 ```
 
-4.3 Alternatively, you can run the `buildexample.sh` file to quickly build the static library and setup a test example web server (`example_app1.o`) on the go. You can add your routes and data by updating the file `example_app1.cpp` that can be found in the `example` directory.
+  - 4.3 Alternatively, you can run the `buildexample.sh` file to quickly build the static library and setup a test example web server (`example_app1.o`) on the go. You can add your routes and data by updating the file `example_app1.cpp` that can be found in the `example` directory.
 
 
 ## Contributions
