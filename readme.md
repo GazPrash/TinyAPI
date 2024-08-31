@@ -117,12 +117,14 @@ cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=OFF
 make
 ```
 
+- Linking the static library
   - 4.2 Link the generated `libTinyApi.a` static library when compiling your `<your_web_app_name>.cpp` file as follows:
 
 ```bash
 g++ <your_web_app_name>.cpp -o <your_web_app_name> -Iinclude -L build/ -lTinyApi
 ```
 
+- Run the Demo/Example
   - 4.3 Alternatively, you can run the `buildexample.sh` file to quickly build the static library and setup a test example web server (`example_app1.o`) on the go. You can add your routes and data by updating the file `example_app1.cpp` that can be found in the `example` directory.
 
 
