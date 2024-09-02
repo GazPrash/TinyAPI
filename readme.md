@@ -21,7 +21,7 @@ git clone https://github.com/GazPrash/TinyAPI.git
 
 2. **Setting up a new API**:
 
-- Create a .cpp file and in the driver function Instantiate the TinyAPI class in your driver function and start listening for HTTP requests!
+- Create a `.cpp` file and in the driver function Instantiate the `TinyAPI` class in your driver function and start listening for HTTP requests!
 ```cpp
 // Include the tinyapi.h header at the top
 #include "include/tinyapi.h"
@@ -104,10 +104,10 @@ std::tuple<std::string, std::string> getClientData() {
 
 ```
 
-4. **Compile and run!**:
+4. **Build and run!**:
 
-- Make sure you have a C++ compiler and CMAKE (minimum ver 3.2) is installed.
-  - 4.1 Create a build directory and run the cmake command, followed by the make command to finalize the build.
+- Make sure you have a C++ compiler and `CMAKE` (minimum version 3.2) is installed.
+  - 4.1 Create a build directory and run the `cmake` command, followed by the make command to finalize the build.
 
 ```bash
 mkdir -p build
