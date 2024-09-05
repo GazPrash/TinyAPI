@@ -4,8 +4,10 @@
 #include "server_utils.h"
 #include <cstddef>
 #include <ctime>
+#include <map>
 #include <string>
 #include <tuple>
+#include <vector>
 
 #ifdef __WIN32__
 // on windows systems
@@ -38,6 +40,8 @@ public:
   std::string HttpHeaderFormat;
   int active_client;
   ServerUtils serverUtils;
+  std::vector<std::string> available_http_methods = {"GET", "POST"};
+  /*std::map<std::string, std>*/
 
   // float server_wait_time;
   TinyAPI(int port, int buffer_sz, int maxConnections, std::string server_ip,

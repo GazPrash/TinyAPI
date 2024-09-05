@@ -150,21 +150,35 @@ void TinyAPI ::HttpRequestHandler(
     std::string method, url_endpoint, http_version;
     requestLineStream >> method >> url_endpoint >> http_version;
 
-    if (method != "GET") {
+    // TODO : Add Support for POST, PUT, etc
+    if (method == "GET" || method == "POST") {
+      // TODO : Add Logging
+      std::cout << "New Request! - " << url_endpoint
+                << " Version : " << http_version << "\n";
+      std::tuple<std::string, std::string> responseTup =
+          connector_f(url_endpoint);
+      std::string response = std::get<0>(responseTup);
+      std::string response_format = std::get<1>(responseTup);
+      SendHttpResponse(client, response, response_format);
+      memset(requestBuffer, 0, sizeof(requestBuffer));
+      continue;
+    } else {
+      // TODO : Add Logging
+      std::cout << "Current Method is : " << method << std::endl;
+      std::cout << "HTTP version is : " << http_version << std::endl;
       std::cerr << "Unsupported HTTP method" << std::endl;
       SendHttpResponse(client, "405 - Method Not Allowed", "text/plain",
                        "HTTP/1.1 405 Method Not Allowed\r\n");
-      continue;
     }
-    // TODO : Add Logging
-    std::cout << "New GET Request! - " << url_endpoint
-              << " Version : " << http_version << "\n";
-    std::tuple<std::string, std::string> responseTup =
-        connector_f(url_endpoint);
-    std::string response = std::get<0>(responseTup);
-    std::string response_format = std::get<1>(responseTup);
-    SendHttpResponse(client, response, response_format);
-    memset(requestBuffer, 0, sizeof(requestBuffer));
+
+    /*std::cout << "New Request! - " << url_endpoint*/
+    /*          << " Version : " << http_version << "\n";*/
+    /*std::tuple<std::string, std::string> responseTup =*/
+    /*    connector_f(url_endpoint);*/
+    /*std::string response = std::get<0>(responseTup);*/
+    /*std::string response_format = std::get<1>(responseTup);*/
+    /*SendHttpResponse(client, response, response_format);*/
+    /*memset(requestBuffer, 0, sizeof(requestBuffer));*/
   }
 }
 
