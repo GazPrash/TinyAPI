@@ -1,13 +1,15 @@
 #include "tinyapi.h"
+#include "request_parser.h"
 #include <bits/types/struct_timeval.h>
 #include <cstddef>
 #include <cstring>
 #include <iostream>
 #include <ostream>
-#include <sstream>
+/*#include <sstream>*/
 #include <string>
 #include <sys/socket.h>
 #include <sys/time.h>
+#include <tuple>
 #include <unistd.h>
 
 TinyAPI ::TinyAPI(int port, int buffer_sz, int maxConnections,
@@ -122,63 +124,31 @@ void TinyAPI ::HttpRequestHandler(
     if (bytesRead < 0) {
       continue;
     }
-    // Null termination for avoiding offerflow (bytesRead <= 4096). This
-    // should almost never ever happen but just ensuring that requestBuffer is
-    // null terminated
-    if (bytesRead >= buffer_sz) {
-      std::cerr << "413 - Payload too large" << std::endl;
-      SendHttpResponse(client, "Payload Exceeded", "text/plain",
-                       "HTTP/1.1 413 Payload Too Large\r\n");
-      continue;
-    } else {
-      requestBuffer[bytesRead] = '\0';
-    }
-    // Convert received data to a string
-    std::string httpRequest(requestBuffer, bytesRead);
-    std::cout << httpRequest << std::endl;
-    // Parse the HTTP request to extract the requested URL
-    std::istringstream requestStream(httpRequest);
-    std::string requestLine;
-    if (!std::getline(requestStream, requestLine)) {
-      std::cerr << "Invalid request" << std::endl;
-      SendHttpResponse(client, "400 - Bad Request", "text/plain",
-                       "HTTP/1.1 400 Bad Request\r\n");
+    std::tuple<std::string, std::string> parsedRequest =
+        HTTPParser::parseBytes(bytesRead, requestBuffer, buffer_sz);
+    if (std::get<1>(parsedRequest) != "200OK") {
+      // handle http error reporting
       continue;
     }
-    // Extract the URL from the request line
-    std::istringstream requestLineStream(requestLine);
+    std::string httpRequest = std::get<0>(parsedRequest);
     std::string method, url_endpoint, http_version;
-    requestLineStream >> method >> url_endpoint >> http_version;
-
-    // TODO : Add Support for POST, PUT, etc
-    if (method == "GET" || method == "POST") {
-      // TODO : Add Logging
-      std::cout << "New Request! - " << url_endpoint
-                << " Version : " << http_version << "\n";
-      std::tuple<std::string, std::string> responseTup =
-          connector_f(url_endpoint);
-      std::string response = std::get<0>(responseTup);
-      std::string response_format = std::get<1>(responseTup);
-      SendHttpResponse(client, response, response_format);
-      memset(requestBuffer, 0, sizeof(requestBuffer));
-      continue;
-    } else {
-      // TODO : Add Logging
+    auto requestInfo =
+        HTTPParser::HTTPR11(httpRequest, method, url_endpoint, http_version);
+    if (std::get<1>(requestInfo) != "200OK") {
+      // handle http error reporting
       std::cout << "Current Method is : " << method << std::endl;
       std::cout << "HTTP version is : " << http_version << std::endl;
       std::cerr << "Unsupported HTTP method" << std::endl;
       SendHttpResponse(client, "405 - Method Not Allowed", "text/plain",
                        "HTTP/1.1 405 Method Not Allowed\r\n");
+      continue;
     }
-
-    /*std::cout << "New Request! - " << url_endpoint*/
-    /*          << " Version : " << http_version << "\n";*/
-    /*std::tuple<std::string, std::string> responseTup =*/
-    /*    connector_f(url_endpoint);*/
-    /*std::string response = std::get<0>(responseTup);*/
-    /*std::string response_format = std::get<1>(responseTup);*/
-    /*SendHttpResponse(client, response, response_format);*/
-    /*memset(requestBuffer, 0, sizeof(requestBuffer));*/
+    std::tuple<std::string, std::string> responseTup =
+        connector_f(url_endpoint);
+    std::string response = std::get<0>(responseTup);
+    std::string response_format = std::get<1>(responseTup);
+    SendHttpResponse(client, response, response_format);
+    memset(requestBuffer, 0, sizeof(requestBuffer));
   }
 }
 

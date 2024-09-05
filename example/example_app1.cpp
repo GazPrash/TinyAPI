@@ -4,8 +4,10 @@
 #include "../include/helper.h"
 #include "../include/tinyapi.h"
 #include <cstddef>
+#include <fstream>
 #include <iostream>
 #include <ostream>
+#include <sstream>
 #include <string>
 #include <tuple>
 
