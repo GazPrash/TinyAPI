@@ -53,7 +53,6 @@ std::tuple<std::string, int> HTTPParser::HTTPR11(std::string httpRequest,
     std::cout << "HTTPR11 \n";
     std::cout << "New Request! - " << url_endpoint
               << " Version : " << http_version << "\n";
-    std::cout << "FIne til now" << std::endl;
     return std::make_tuple(url_endpoint, 200);
   }
 

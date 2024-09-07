@@ -29,9 +29,8 @@ git clone https://github.com/GazPrash/TinyAPI.git
 std::tuple<std::string, std::string> home(std::string url_endpoint) {
   // you can access the exact endpoint inside your defined method using the
   // 'url_endpoint' variable
-
   std::string response = "Greetings User! Welcome to TinyAPI.";
-  return {response, "text/html"}
+  return {response, "text/html"};
 }
 
 int main() {
