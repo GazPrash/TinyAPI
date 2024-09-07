@@ -2,24 +2,17 @@
 #define TINYAPI_H
 
 #include "server_utils.h"
+#include <arpa/inet.h>
 #include <cstddef>
 #include <ctime>
-/*#include <map>*/
-#include <string>
-#include <tuple>
-#include <vector>
-
-#ifdef __WIN32__
-// on windows systems
-#include <winsock2.h> // Link with -lws2_32
-#else
-#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <tuple>
 #include <unistd.h>
-#endif
+#include <unordered_map>
+#include <vector>
 
 class TinyAPI {
 private:
@@ -41,19 +34,22 @@ public:
   int active_client;
   ServerUtils serverUtils;
   std::vector<std::string> available_http_methods = {"GET", "POST"};
-  /*std::map<std::string, std>*/
+  std::unordered_map<std::string,
+                     std::tuple<std::string, std::string> (*)(std::string)>
+      getMethods;
+  std::unordered_map<std::string,
+                     std::tuple<std::string, std::string> (*)(std::string)>
+      postMethods;
 
   // float server_wait_time;
   TinyAPI(int port, int buffer_sz, int maxConnections, std::string server_ip,
           size_t server_timeout, HOST_OS os);
   ~TinyAPI();
   int initialize_server(bool bind_default = true);
-  void HttpRequestHandler(
-      std::tuple<std::string, std::string> (*connector_f)(std::string));
+  void enable_listener();
   int SendHttpResponse(u_int client, std::string response,
                        std::string response_format,
                        std::string httpResponseCode = "HTTP/1.1 200 OK\n");
-  // std::string mapStringify()
 };
 
 #endif

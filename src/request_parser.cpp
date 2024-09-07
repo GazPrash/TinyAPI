@@ -1,12 +1,13 @@
 #include "request_parser.h"
 #include <iostream>
+#include <ostream>
 #include <sstream>
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <tuple>
 
-std::tuple<std::string, std::string>
+std::tuple<std::string, int>
 /*Returns <ParsedBytes, Status Code> (Empty string if parsing fails, along with
    the satus code) */
 HTTPParser::parseBytes(const int bytesRead, char *requestBuffer,
@@ -18,26 +19,29 @@ HTTPParser::parseBytes(const int bytesRead, char *requestBuffer,
     std::cerr << "413 - Payload too large" << std::endl;
     /*SendHttpResponse(client, "Payload Exceeded", "text/plain",*/
     /*                 "HTTP/1.1 413 Payload Too Large\r\n");*/
-    return std::make_tuple("", "413");
+    int error_status_code = 413;
+    return std::make_tuple("", error_status_code);
   } else {
     requestBuffer[bytesRead] = '\0';
   }
   // Convert received data to a string
   std::string httpRequest(requestBuffer, bytesRead);
   std::cout << httpRequest << std::endl;
-  return std::make_tuple(httpRequest, "200OK");
+  return std::make_tuple(httpRequest, 200);
 }
 
-std::tuple<std::string, std::string>
-HTTPParser::HTTPR11(std::string httpRequest, std::string &method,
-                    std::string &url_endpoint, std::string &http_version) {
+std::tuple<std::string, int> HTTPParser::HTTPR11(std::string httpRequest,
+                                                 std::string &method,
+                                                 std::string &url_endpoint,
+                                                 std::string &http_version) {
   std::istringstream requestStream(httpRequest);
   std::string requestLine;
   if (!std::getline(requestStream, requestLine)) {
     std::cerr << "Invalid request" << std::endl;
     /*SendHttpResponse(client, "400 - Bad Request", "text/plain",*/
     /*                 "HTTP/1.1 400 Bad Request\r\n");*/
-    return std::make_tuple("", "400");
+    int error_status_code = 400;
+    return std::make_tuple("", error_status_code);
   }
   // Extract the URL from the request line
   std::istringstream requestLineStream(requestLine);
@@ -49,9 +53,11 @@ HTTPParser::HTTPR11(std::string httpRequest, std::string &method,
     std::cout << "HTTPR11 \n";
     std::cout << "New Request! - " << url_endpoint
               << " Version : " << http_version << "\n";
-    return std::make_tuple(url_endpoint, "200OK");
+    std::cout << "FIne til now" << std::endl;
+    return std::make_tuple(url_endpoint, 200);
   }
 
   // Method Not Allowed
-  return std::make_tuple(url_endpoint, "405");
+  int error_status_code = 405;
+  return std::make_tuple(url_endpoint, error_status_code);
 }

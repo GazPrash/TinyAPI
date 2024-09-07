@@ -19,92 +19,41 @@ TinyAPI is a minimalistic C++ library that allows you to build lightweight REST 
 git clone https://github.com/GazPrash/TinyAPI.git
 ```
 
-2. **Setting up a new API**:
+2. **Quickly setting up a new API**:
 
 - Create a `.cpp` file and in the driver function Instantiate the `TinyAPI` class in your driver function and start listening for HTTP requests!
 ```cpp
 // Include the tinyapi.h header at the top
 #include "include/tinyapi.h"
 
+std::tuple<std::string, std::string> home(std::string url_endpoint) {
+  // you can access the exact endpoint inside your defined method using the
+  // 'url_endpoint' variable
+
+  std::string response = "Greetings User! Welcome to TinyAPI.";
+  return {response, "text/html"}
+}
+
 int main() {
-  // Quickly setting up an HTTP server at device's localhost
+  // Quickly setting up a basic (HTTP/1.1) REST Api at device's localhost
   std::string localhost = "127.0.0.1";
-  size_t timeout = 14500; // 14.5s
+  size_t timeout = 1450000; // 14.5s
   TinyAPI *new_api =
       new TinyAPI(8000, 1024, 5, localhost, timeout, TinyAPI::HOST_OS::LINUX);
-  /*std::cout << &new_api << std::endl;*/
   if (new_api->initialize_server() == 1) {
     return 1;
   }
-  // this method activates a listening cycle so that a server can
-  // recieve and respond to multiple client requests.
-  // You must create a "connector" function that returns a string tuple
-  // The connector function must have all the logic regarding how a given
-  // request must be handled you can create different functions for handling
-  // different requests based on different routes so that you can tell TinyAPI
-  // what URL should trigger this function! Connector function must return a
-  // string tuple such that : First element is : text/json/binary in std::string
-  // format And the second element should be : format of the data i.e text/html
-  // or image/png or image/jpeg
-  new_api->HttpRequestHandler(&connector);
+
+  // Easy Routing
+  new_api->getMethods["/home"] = home;
+
+  // Start the server
+  new_api->enable_listener();
   return 0;
 }
 ```
 
-3. **Routing**:
-
-- You can use meaningful URLs to help clients visiting your application. Just define the ```connector``` function in your code to handle different URL endpoints.
-
-```cpp
-
-std::tuple<std::string, std::string> connector(std::string endpoint) {
-  if (endpoint == "/home")
-    return HomePage();
-  else if (endpoint == "/gatowallpaper")
-    return gatoWallpaper();
-  else if (endpoint == "/clientData")
-    return getClientData();
-
-  // Create a custom 404 Message in case the user requests an unknown endpoint
-  // You must ensure that this function returns from all of its execution paths
-  // so that no compilation error or undefined behaviour may happen.
-  std::string err404 = "Page Not Found!";
-  return std::make_tuple(err404, "text/html");
-}
-
-```
-Now all there left to do is to implement all the different functions for handling different routes such that
-each route is binded to a function.
-
-```cpp
-/route ='/home'
-std::tuple<std::string, std::string> HomePage() {
-  std::map<std::string, std::string> responseMap;
-  responseMap["Greet"] = "Welcome Home!";
-  auto response = Helper::MapToString(responseMap);
-  auto responseTup = std::make_tuple(response, "text/html");
-  return responseTup;
-}
-
-// route='/gatowallpaper'
-std::tuple<std::string, std::string> gatoWallpaper() {
-  const std::string GATO_IMG_PATH = "images/gato.png";
-  std::string imgContent = readImageFile(GATO_IMG_PATH);
-  auto responseTup = std::make_tuple(imgContent, "image/png");
-  return responseTup;
-}
-
-// route='/clientData'
-std::tuple<std::string, std::string> getClientData() {
-  const std::string dataPath = "test/data/testdata.json";
-  auto response = Helper::jsonToString(dataPath);
-  auto responseTup = std::make_tuple(response, "text/html");
-  return responseTup;
-}
-
-```
-
-4. **Build and run!**:
+3. **Build and run!**:
 
 - Make sure you have a C++ compiler and `CMAKE` (minimum version 3.2) is installed.
   - 4.1 Create a build directory and run the `cmake` command, followed by the make command to finalize the build.

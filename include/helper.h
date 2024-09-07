@@ -10,6 +10,7 @@
 namespace Helper {
 std::string MapToString(const std::map<std::string, std::string> dataMap);
 std::string jsonToString(const std::string filepath);
+std::string gerCurrentDate();
 }; // namespace Helper
 
 #endif // HELPER_H

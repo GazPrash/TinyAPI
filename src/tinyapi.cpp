@@ -73,8 +73,7 @@ int TinyAPI ::initialize_server(bool bind_default) {
   return 0;
 }
 
-void TinyAPI ::HttpRequestHandler(
-    std::tuple<std::string, std::string> (*connector_f)(std::string)) {
+void TinyAPI ::enable_listener() {
   /**
    * This method can be used to establish connection with the Http server.
    *
@@ -124,27 +123,35 @@ void TinyAPI ::HttpRequestHandler(
     if (bytesRead < 0) {
       continue;
     }
-    std::tuple<std::string, std::string> parsedRequest =
+    std::tuple<std::string, int> parsedRequest =
         HTTPParser::parseBytes(bytesRead, requestBuffer, buffer_sz);
-    if (std::get<1>(parsedRequest) != "200OK") {
+    if (std::get<1>(parsedRequest) != 200) {
       // handle http error reporting
       continue;
     }
     std::string httpRequest = std::get<0>(parsedRequest);
     std::string method, url_endpoint, http_version;
-    auto requestInfo =
+    std::tuple<std::string, int> requestInfo =
         HTTPParser::HTTPR11(httpRequest, method, url_endpoint, http_version);
-    if (std::get<1>(requestInfo) != "200OK") {
+
+    if (std::get<1>(requestInfo) != 200) {
       // handle http error reporting
       std::cout << "Current Method is : " << method << std::endl;
       std::cout << "HTTP version is : " << http_version << std::endl;
       std::cerr << "Unsupported HTTP method" << std::endl;
       SendHttpResponse(client, "405 - Method Not Allowed", "text/plain",
-                       "HTTP/1.1 405 Method Not Allowed\r\n");
+                       "HTTP/1.1 : 405 Method Not Allowed\r\n");
       continue;
     }
-    std::tuple<std::string, std::string> responseTup =
-        connector_f(url_endpoint);
+
+    auto getmethod = getMethods[url_endpoint];
+    if (!getmethod) {
+      /*send a response to the user that this route/endpoint is being requested
+       * by the user but not covered by the web api*/
+      std::cout << "Route cannot be served : " << url_endpoint << std::endl;
+      continue;
+    }
+    std::tuple<std::string, std::string> responseTup = getmethod(url_endpoint);
     std::string response = std::get<0>(responseTup);
     std::string response_format = std::get<1>(responseTup);
     SendHttpResponse(client, response, response_format);
