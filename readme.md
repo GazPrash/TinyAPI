@@ -1,6 +1,8 @@
 # TinyAPI - Rest API Framework for C++
 
-TinyAPI is a minimalistic C++ library that allows you to build lightweight REST APIs. Designed to be a bare-bones framework for quickly setting up HTTP Servers or API Clients. Setting up a server is straightforward and user-friendly, allowing you to define the logic for your API endpoints, similar to modern web frameworks like Flask. No third party libraries were used to develop this API framework! (currently only supported on Linux)
+[!Warning] TinAPI is currently under heavy development and workflows may change in the future. This project is mainly a hobby project and was supposed to be a no-dependency/hackable library and hence if you are planning to use it in production I'd encourage you to do so with caution. Check out [Ongoing Improvements](#ongoing-improvements) section to keep an eye on current development priorities.
+
+TinyAPI is a minimalistic C++ library that allows you to build lightweight REST APIs. Designed to be a bare-bones framework and easily hackable for quickly setting up HTTP Servers or API Clients exactly how you want them to be. Setting up a server is straightforward and user-friendly, allowing you to define the logic for your API endpoints, similar to modern web frameworks like Flask. No third party libraries were used to develop this API framework! (currently only supported on Linux)
 
 ## Features
 
@@ -85,6 +87,6 @@ Contributions are welcome! If you'd like to contribute to TinyAPI, please follow
 4. **Commit your changes and push to your fork**.
 5. **Create a pull request on the main repository**.
 
-## Ongoing Improvements
+## <a id="ongoing-improvements"></a> Ongoing Improvements
 
 I'm actively working on making TinyAPI even better. The next big step is to introduce multi-threading support for enhanced performance and concurrency, add encoding support for serving media files (currently Images are supported), and more.
