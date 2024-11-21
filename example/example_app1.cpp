@@ -77,5 +77,8 @@ int main() {
 
   // Start the server
   new_api->enable_listener();
+
+  // Delete the instance for cleanup
+  delete new_api;
   return 0;
 }
