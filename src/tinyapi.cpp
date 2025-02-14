@@ -144,18 +144,43 @@ void TinyAPI ::enable_listener() {
       continue;
     }
 
-    auto getmethod = getMethods[url_endpoint];
-    if (!getmethod) {
-      /*send a response to the user that this route/endpoint is being requested
-       * by the user but not covered by the web api*/
-      std::cout << "Route cannot be served : " << url_endpoint << std::endl;
-      continue;
+    if (method == "GET") {
+      auto getmethod = getMethods[url_endpoint];
+      if (!getmethod) {
+        /*send a response to the user that this route/endpoint is being
+         * requested by the user but not covered by the web api*/
+        std::cout << "Route cannot be served : " << url_endpoint << std::endl;
+        continue;
+      }
+      std::tuple<std::string, std::string> responseTup =
+          getmethod(url_endpoint);
+      std::string response = std::get<0>(responseTup);
+      std::string response_format = std::get<1>(responseTup);
+      SendHttpResponse(client, response, response_format);
+      memset(requestBuffer, 0, sizeof(requestBuffer));
+    } else if (method == "POST") {
+      auto postmethod = postMethods[url_endpoint];
+      if (!postmethod) {
+        /*send a response to the user that this route/endpoint is being
+         * requested by the user but not covered by the web api*/
+        std::cout << "Route cannot be served : " << url_endpoint << std::endl;
+        continue;
+      }
+      std::tuple<std::string, std::string> responseTup =
+          postmethod(url_endpoint, httpRequest);
+      std::string response = std::get<0>(responseTup);
+      std::string response_format = std::get<1>(responseTup);
+      SendHttpResponse(client, response, response_format);
+      memset(requestBuffer, 0, sizeof(requestBuffer));
+    } else {
+      /*HTTP 405 status code indicates that the server has received a request
+       * method that is not supported for the target resource*/
+      SendHttpResponse(client,
+                       "405 - Method is not supported for the target resource",
+                       "text/plain",
+                       "HTTP/1.1 : 405 - Method is not supported for the "
+                       "target resource \r\n");
     }
-    std::tuple<std::string, std::string> responseTup = getmethod(url_endpoint);
-    std::string response = std::get<0>(responseTup);
-    std::string response_format = std::get<1>(responseTup);
-    SendHttpResponse(client, response, response_format);
-    memset(requestBuffer, 0, sizeof(requestBuffer));
   }
 }
 

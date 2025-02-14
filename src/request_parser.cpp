@@ -26,7 +26,6 @@ HTTPParser::parseBytes(const int bytesRead, char *requestBuffer,
   }
   // Convert received data to a string
   std::string httpRequest(requestBuffer, bytesRead);
-  std::cout << httpRequest << std::endl;
   return std::make_tuple(httpRequest, 200);
 }
 
@@ -50,6 +49,7 @@ std::tuple<std::string, int> HTTPParser::HTTPR11(std::string httpRequest,
   if (method == "GET" || method == "POST") {
     // TODO : Add Logging
 
+    std::cout << httpRequest << std::endl;
     std::cout << "HTTPR11 \n";
     std::cout << "New Request! - " << url_endpoint
               << " Version : " << http_version << "\n";

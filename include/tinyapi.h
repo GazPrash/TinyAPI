@@ -37,8 +37,8 @@ public:
   std::unordered_map<std::string,
                      std::tuple<std::string, std::string> (*)(std::string)>
       getMethods;
-  std::unordered_map<std::string,
-                     std::tuple<std::string, std::string> (*)(std::string)>
+  std::unordered_map<std::string, std::tuple<std::string, std::string> (*)(
+                                      std::string, std::string)>
       postMethods;
 
   // float server_wait_time;

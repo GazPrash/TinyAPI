@@ -59,6 +59,73 @@ std::tuple<std::string, std::string> getData(std::string url_endpoint) {
   return responseTup;
 }
 
+bool validatePostRequest(std::string request) {
+  std::cout << "Request : " << request << std::endl;
+  return (request == "username=admin&password=password") ? true : false;
+}
+
+std::tuple<std::string, std::string> userLogin(std::string url_endpoint,
+                                               std::string request) {
+  if (!validatePostRequest(request))
+    return std::make_tuple("Invalid Request", "text/html");
+
+  return std::make_tuple("Failed to open the file", "text/html");
+
+  /*const std::string filePath = "./static/login.html";*/
+  /*std::ifstream file(filePath);*/
+  /*if (!file)*/
+  /*  return std::make_tuple("Failed to open the file", "text/html");*/
+  /*std::stringstream buffer;*/
+  /*buffer << file.rdbuf();*/
+  /*std::string html = buffer.str();*/
+  /*auto response =*/
+  /*    "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " +*/
+  /*    std::to_string(html.size()) + "\r\n\r\n" + html;*/
+  /*auto responseTup = std::make_tuple(response, "text/html");*/
+  /*return responseTup;*/
+}
+
+std::tuple<std::string, std::string> loginPage(std::string url_endpoint) {
+  const std::string filePath = "/home/pshr1/personal/lowlvl/networking/TinyAPI/"
+                               "example/static/login.html";
+  std::ifstream file(filePath);
+  if (!file)
+    return std::make_tuple("Failed to open the file", "text/html");
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  std::string html = buffer.str();
+  auto responseTup = std::make_tuple(html, "text/html");
+  return responseTup;
+}
+
+std::tuple<std::string, std::string> resetCSS(std::string url_endpoint) {
+
+  const std::string filePath = "/home/pshr1/personal/lowlvl/networking/TinyAPI/"
+                               "example/static/reset.css";
+  std::ifstream file(filePath);
+  if (!file)
+    return std::make_tuple("Failed to open the file", "text/html");
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  std::string html = buffer.str();
+  auto responseTup = std::make_tuple(html, "text/css");
+  return responseTup;
+}
+
+std::tuple<std::string, std::string> indexCSS(std::string url_endpoint) {
+
+  const std::string filePath = "/home/pshr1/personal/lowlvl/networking/TinyAPI/"
+                               "example/static/index.css";
+  std::ifstream file(filePath);
+  if (!file)
+    return std::make_tuple("Failed to open the file", "text/html");
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  std::string html = buffer.str();
+  auto responseTup = std::make_tuple(html, "text/css");
+  return responseTup;
+}
+
 int main() {
   // Quickly setting up a HTTP Rest Api at device's localhost
   std::string localhost = "127.0.0.1";
@@ -70,10 +137,16 @@ int main() {
   }
 
   // Easy Routing
+  new_api->getMethods["/"] = HomePage;
   new_api->getMethods["/home"] = HomePage;
   new_api->getMethods["/about"] = AboutPage;
   new_api->getMethods["/gato"] = gatoImage;
   new_api->getMethods["/data"] = getData;
+  new_api->getMethods["/login"] = loginPage;
+  new_api->getMethods["/index.css"] = indexCSS;
+  new_api->getMethods["/reset.css"] = resetCSS;
+
+  new_api->postMethods["/login"] = userLogin;
 
   // Start the server
   new_api->enable_listener();
