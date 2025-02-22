@@ -81,22 +81,22 @@ bool validatePostRequest(std::string parsed_request) {
           formData["password"] == "password");
 }
 
-// std::tuple<std::string, std::string> userLogin(RequestContext ctx) {
-//   if (!validatePostRequest(ctx.request_body))
-//     return std::make_tuple("Invalid Request", "text/html");
+std::tuple<std::string, std::string> userLogin(RequestContext ctx) {
+  if (!validatePostRequest(ctx.request_body))
+    return std::make_tuple("Invalid Request", "text/html");
 
-//   const std::string adminFilePath =
-//   "/home/pshr1/personal/lowlvl/networking/"
-//                                     "TinyAPI/example/static/admin.html";
-//   std::ifstream file(adminFilePath);
-//   if (!file)
-//     return std::make_tuple("Failed to open the file", "text/html");
-//   std::stringstream buffer;
-//   buffer << file.rdbuf();
-//   std::string html = buffer.str();
-//   auto responseTup = std::make_tuple(html, "text/html");
-//   return responseTup;
-// }
+  const std::string adminFilePath =
+  "/home/pshr1/personal/lowlvl/networking/"
+                                    "TinyAPI/example/static/admin.html";
+  std::ifstream file(adminFilePath);
+  if (!file)
+    return std::make_tuple("Failed to open the file", "text/html");
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  std::string html = buffer.str();
+  auto responseTup = std::make_tuple(html, "text/html");
+  return responseTup;
+}
 
 std::tuple<std::string, std::string> loginPage(RequestContext ctx) {
   const std::string filePath = "/home/pshr1/personal/lowlvl/networking/TinyAPI/"
@@ -148,8 +148,6 @@ int main(int argc, char const *argv[]) {
   if (new_api->initialize_server() == 1) {
     return 1;
   }
-
-  // STATIC_WEBSITE_HANDLER(new_api, "/home", "example/static/home.html");
 
   // Easy Routing
   new_api->getMethods["/"] = HomePage;
