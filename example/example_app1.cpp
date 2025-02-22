@@ -77,7 +77,8 @@ bool validatePostRequest(std::string parsed_request) {
     }
   }
 
-  return (formData["username"] == "admin" && formData["password"] == "password");
+  return (formData["username"] == "admin" &&
+          formData["password"] == "password");
 }
 
 std::tuple<std::string, std::string> userLogin(RequestContext ctx) {
