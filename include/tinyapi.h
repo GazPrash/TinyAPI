@@ -45,10 +45,10 @@ public:
           size_t server_timeout);
   ~TinyAPI();
   std::unordered_map<std::string,
-                     std::tuple<std::string, std::string> (*)(std::string)>
+                     std::tuple<std::string, std::string> (*)(RequestContext)>
       getMethods;
-  std::unordered_map<std::string, std::tuple<std::string, std::string> (*)(
-                                      std::string, std::string)>
+  std::unordered_map<std::string,
+                     std::tuple<std::string, std::string> (*)(RequestContext)>
       postMethods;
   int initialize_server(bool bind_default = true);
   void enable_listener();
