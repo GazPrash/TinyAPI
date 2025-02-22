@@ -24,7 +24,7 @@ std::string readImageFile(const std::string &filename) {
 }
 
 // route = /home
-std::tuple<std::string, std::string> HomePage(std::string url_endpoint) {
+std::tuple<std::string, std::string> HomePage(RequestContext ctx) {
   // you can access the exact endpoint inside your defined method using the
   // url_endpoint variable
   std::map<std::string, std::string> responseMap;
@@ -35,7 +35,7 @@ std::tuple<std::string, std::string> HomePage(std::string url_endpoint) {
 }
 
 // route = /about
-std::tuple<std::string, std::string> AboutPage(std::string url_endpoint) {
+std::tuple<std::string, std::string> AboutPage(RequestContext ctx) {
   std::map<std::string, std::string> responseMap;
   responseMap["Made by"] = "Sammy Zane";
   responseMap["Total Downloads"] = "123,000+";
@@ -45,9 +45,9 @@ std::tuple<std::string, std::string> AboutPage(std::string url_endpoint) {
   return responseTup;
 }
 
-std::tuple<std::string, std::string> gatoImage(std::string url_endpoint) {
-  if (url_endpoint.empty()) {
-    url_endpoint = "asdj";
+std::tuple<std::string, std::string> gatoImage(RequestContext ctx) {
+  if (ctx.url_endpoint.empty()) {
+    ctx.url_endpoint = "asdj";
   }
   const std::string GATO_IMG_PATH = "images/gato.png";
   std::string imgContent = readImageFile(GATO_IMG_PATH);
@@ -55,7 +55,7 @@ std::tuple<std::string, std::string> gatoImage(std::string url_endpoint) {
   return responseTup;
 }
 
-std::tuple<std::string, std::string> getData(std::string url_endpoint) {
+std::tuple<std::string, std::string> getData(RequestContext ctx) {
   const std::string dataPath = "test/data/testdata.json";
   auto response = Helper::jsonToString(dataPath);
   auto responseTup = std::make_tuple(response, "text/html");
@@ -63,6 +63,7 @@ std::tuple<std::string, std::string> getData(std::string url_endpoint) {
 }
 
 bool validatePostRequest(std::string parsed_request) {
+  std::cout << "Parsed Request: " << parsed_request << std::endl;
   std::unordered_map<std::string, std::string> formData;
   std::istringstream stream(parsed_request);
   std::string pair;
@@ -79,9 +80,8 @@ bool validatePostRequest(std::string parsed_request) {
   return (formData["username"] == "admin" && formData["password"] == "password");
 }
 
-std::tuple<std::string, std::string> userLogin(std::string url_endpoint,
-                                               std::string parsed_request) {
-  if (!validatePostRequest(parsed_request))
+std::tuple<std::string, std::string> userLogin(RequestContext ctx) {
+  if (!validatePostRequest(ctx.request_body))
     return std::make_tuple("Invalid Request", "text/html");
 
   const std::string adminFilePath = "/home/pshr1/personal/lowlvl/networking/"
@@ -96,7 +96,7 @@ std::tuple<std::string, std::string> userLogin(std::string url_endpoint,
   return responseTup;
 }
 
-std::tuple<std::string, std::string> loginPage(std::string url_endpoint) {
+std::tuple<std::string, std::string> loginPage(RequestContext ctx) {
   const std::string filePath = "/home/pshr1/personal/lowlvl/networking/TinyAPI/"
                                "example/static/login.html";
   std::ifstream file(filePath);
@@ -109,7 +109,7 @@ std::tuple<std::string, std::string> loginPage(std::string url_endpoint) {
   return responseTup;
 }
 
-std::tuple<std::string, std::string> resetCSS(std::string url_endpoint) {
+std::tuple<std::string, std::string> resetCSS(RequestContext ctx) {
 
   const std::string filePath = "/home/pshr1/personal/lowlvl/networking/TinyAPI/"
                                "example/static/reset.css";
@@ -123,7 +123,7 @@ std::tuple<std::string, std::string> resetCSS(std::string url_endpoint) {
   return responseTup;
 }
 
-std::tuple<std::string, std::string> indexCSS(std::string url_endpoint) {
+std::tuple<std::string, std::string> indexCSS(RequestContext ctx) {
 
   const std::string filePath = "/home/pshr1/personal/lowlvl/networking/TinyAPI/"
                                "example/static/index.css";

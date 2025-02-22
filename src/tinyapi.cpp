@@ -136,6 +136,7 @@ void TinyAPI ::enable_listener() {
       continue;
     }
 
+    requestInfo.log();
     if (requestInfo.http_method == HTTP_METHOD::GET) {
       auto getmethod = getMethods[requestInfo.url_endpoint];
       if (!getmethod) {
@@ -146,7 +147,7 @@ void TinyAPI ::enable_listener() {
         continue;
       }
       std::tuple<std::string, std::string> responseTup =
-          getmethod(requestInfo.url_endpoint);
+          getmethod(requestInfo);
       std::string response = std::get<0>(responseTup);
       std::string response_format = std::get<1>(responseTup);
       SendHttpResponse(client, response, response_format);
@@ -161,8 +162,9 @@ void TinyAPI ::enable_listener() {
         continue;
       }
       auto parsed_request_body = parsePostRequest(requestInfo.request_body);
+      requestInfo.request_body = parsed_request_body;
       std::tuple<std::string, std::string> responseTup =
-          postmethod(requestInfo.url_endpoint, parsed_request_body);
+          postmethod(requestInfo);
       std::string response = std::get<0>(responseTup);
       std::string response_format = std::get<1>(responseTup);
       SendHttpResponse(client, response, response_format);
