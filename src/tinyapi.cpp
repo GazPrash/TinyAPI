@@ -1,11 +1,11 @@
 #include "tinyapi.h"
-#include "request_parser.h"
 #include <bits/types/struct_timeval.h>
 #include <cstddef>
 #include <cstring>
 #include <iostream>
 #include <ostream>
-/*#include <sstream>*/
+// /*#include <sstream>*/
+// #include <sstream>
 #include <string>
 #include <sys/socket.h>
 #include <sys/time.h>
@@ -13,11 +13,11 @@
 #include <unistd.h>
 
 TinyAPI ::TinyAPI(int port, int buffer_sz, int maxConnections,
-                  std::string server_ip, size_t server_timeout, HOST_OS os)
+                  std::string server_ip, size_t server_timeout)
     : port(port), buffer_sz(buffer_sz), server_timeout(server_timeout) {
   maxRequestHandles = maxConnections;
   ip = server_ip;
-  current_os = os;
+  // current_os = os;
 }
 
 TinyAPI ::~TinyAPI() {
@@ -42,15 +42,15 @@ int TinyAPI ::initialize_server(bool bind_default) {
    * @return 0 if socket is created successfully else 1
    */
   int iResult;
-  if (current_os == HOST_OS::WIN) {
-    // Initializing the Winsock Library.
-    /*iResult = WSAStartup(MAKEWORD(2, 2), &WSAData);*/
-    /*if (iResult != 0) {*/
-    /*  perror("WSAStartup Failed. Aborting server initialization.\n");*/
-    /*  return 1;*/
-    /*}*/
-    /*std::cout << "Winsock Initiated.\n";*/
-  }
+  // if (current_os == HOST_OS::WIN) {
+  //   // Initializing the Winsock Library.
+  //   /*iResult = WSAStartup(MAKEWORD(2, 2), &WSAData);*/
+  //   /*if (iResult != 0) {*/
+  //   /*  perror("WSAStartup Failed. Aborting server initialization.\n");*/
+  //   /*  return 1;*/
+  //   /*}*/
+  //   /*std::cout << "Winsock Initiated.\n";*/
+  // }
   // No initialization required for Linux's socket library
 
   ssocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -95,8 +95,10 @@ void TinyAPI ::enable_listener() {
 
   struct timeval serv_timeout;
   size_t server_timeout_sec = server_timeout / 1000; // ms to seconds
+  size_t server_timeout_usec =
+      (server_timeout % 1000) * 1000; // remaining ms to microseconds
   serv_timeout.tv_sec = server_timeout_sec;
-  serv_timeout.tv_usec = 500000; // microseconds
+  serv_timeout.tv_usec = server_timeout_usec;
   // Limiting the Server Socket to the timeout provided by
   // the user Controlled Timeouts
   setsockopt(ssocket, SOL_SOCKET, SO_RCVTIMEO, (const char *)&serv_timeout,
@@ -105,7 +107,6 @@ void TinyAPI ::enable_listener() {
   time_t server_start_time = time(NULL);
   std::cout << "Server is now open for connection...[PORT:" << port << "]\n";
 
-  // TODO : Add a server timeout instead of infiinite while loop
   char requestBuffer[buffer_sz];
   while (1) {
     time_t current_time = time(NULL);
@@ -123,51 +124,45 @@ void TinyAPI ::enable_listener() {
     if (bytesRead < 0) {
       continue;
     }
-    std::tuple<std::string, int> parsedRequest =
-        HTTPParser::parseBytes(bytesRead, requestBuffer, buffer_sz);
-    if (std::get<1>(parsedRequest) != 200) {
-      // handle http error reporting
-      continue;
-    }
-    std::string httpRequest = std::get<0>(parsedRequest);
-    std::string method, url_endpoint, http_version;
-    std::tuple<std::string, int> requestInfo =
-        HTTPParser::HTTPR11(httpRequest, method, url_endpoint, http_version);
 
-    if (std::get<1>(requestInfo) != 200) {
-      // handle http error reporting
-      std::cout << "Current Method is : " << method << std::endl;
-      std::cout << "HTTP version is : " << http_version << std::endl;
+    RequestContext requestInfo =
+        requestHandler.HTTPR11(bytesRead, requestBuffer, buffer_sz);
+
+    if (requestInfo.status_code != STATUS_CODE::OK) {
+      requestInfo.log();
       std::cerr << "Unsupported HTTP method" << std::endl;
       SendHttpResponse(client, "405 - Method Not Allowed", "text/plain",
                        "HTTP/1.1 : 405 Method Not Allowed\r\n");
       continue;
     }
 
-    if (method == "GET") {
-      auto getmethod = getMethods[url_endpoint];
+    if (requestInfo.http_method == HTTP_METHOD::GET) {
+      auto getmethod = getMethods[requestInfo.url_endpoint];
       if (!getmethod) {
         /*send a response to the user that this route/endpoint is being
          * requested by the user but not covered by the web api*/
-        std::cout << "Route cannot be served : " << url_endpoint << std::endl;
+        std::cout << "Route cannot be served : " << requestInfo.url_endpoint
+                  << std::endl;
         continue;
       }
       std::tuple<std::string, std::string> responseTup =
-          getmethod(url_endpoint);
+          getmethod(requestInfo.url_endpoint);
       std::string response = std::get<0>(responseTup);
       std::string response_format = std::get<1>(responseTup);
       SendHttpResponse(client, response, response_format);
       memset(requestBuffer, 0, sizeof(requestBuffer));
-    } else if (method == "POST") {
-      auto postmethod = postMethods[url_endpoint];
+    } else if (requestInfo.http_method == HTTP_METHOD::POST) {
+      auto postmethod = postMethods[requestInfo.url_endpoint];
       if (!postmethod) {
         /*send a response to the user that this route/endpoint is being
          * requested by the user but not covered by the web api*/
-        std::cout << "Route cannot be served : " << url_endpoint << std::endl;
+        std::cout << "Route cannot be served : " << requestInfo.url_endpoint
+                  << std::endl;
         continue;
       }
+      auto parsed_request_body = parsePostRequest(requestInfo.request_body);
       std::tuple<std::string, std::string> responseTup =
-          postmethod(url_endpoint, httpRequest);
+          postmethod(requestInfo.url_endpoint, parsed_request_body);
       std::string response = std::get<0>(responseTup);
       std::string response_format = std::get<1>(responseTup);
       SendHttpResponse(client, response, response_format);
@@ -204,4 +199,14 @@ int TinyAPI ::SendHttpResponse(u_int client, std::string response,
     return 1;
   }
   return 0;
+}
+
+std::string TinyAPI ::parsePostRequest(std::string request_body) {
+  size_t pos = request_body.find("\r\n\r\n");
+  if (pos == std::string::npos) {
+    return "<Invalid-Post-Request>";
+  }
+
+  std::string body = request_body.substr(pos + 4);
+  return body;
 }

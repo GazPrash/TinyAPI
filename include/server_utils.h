@@ -1,6 +1,8 @@
 #include <ctime>
 #include <string>
 
+enum class HOST_OS { WIN, LINUX };
+
 class ServerUtils {
 public:
   static std::string getCurDate() {

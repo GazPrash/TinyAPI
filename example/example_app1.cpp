@@ -46,6 +46,9 @@ std::tuple<std::string, std::string> AboutPage(std::string url_endpoint) {
 }
 
 std::tuple<std::string, std::string> gatoImage(std::string url_endpoint) {
+  if (url_endpoint.empty()) {
+    url_endpoint = "asdj";
+  }
   const std::string GATO_IMG_PATH = "images/gato.png";
   std::string imgContent = readImageFile(GATO_IMG_PATH);
   auto responseTup = std::make_tuple(imgContent, "image/png");
@@ -59,30 +62,38 @@ std::tuple<std::string, std::string> getData(std::string url_endpoint) {
   return responseTup;
 }
 
-bool validatePostRequest(std::string request) {
-  std::cout << "Request : " << request << std::endl;
-  return (request == "username=admin&password=password") ? true : false;
+bool validatePostRequest(std::string parsed_request) {
+  std::unordered_map<std::string, std::string> formData;
+  std::istringstream stream(parsed_request);
+  std::string pair;
+
+  while (std::getline(stream, pair, '&')) {
+    size_t pos = pair.find('=');
+    if (pos != std::string::npos) {
+      std::string key = pair.substr(0, pos);
+      std::string value = pair.substr(pos + 1);
+      formData[key] = value;
+    }
+  }
+
+  return (formData["username"] == "admin" && formData["password"] == "password");
 }
 
 std::tuple<std::string, std::string> userLogin(std::string url_endpoint,
-                                               std::string request) {
-  if (!validatePostRequest(request))
+                                               std::string parsed_request) {
+  if (!validatePostRequest(parsed_request))
     return std::make_tuple("Invalid Request", "text/html");
 
-  return std::make_tuple("Failed to open the file", "text/html");
-
-  /*const std::string filePath = "./static/login.html";*/
-  /*std::ifstream file(filePath);*/
-  /*if (!file)*/
-  /*  return std::make_tuple("Failed to open the file", "text/html");*/
-  /*std::stringstream buffer;*/
-  /*buffer << file.rdbuf();*/
-  /*std::string html = buffer.str();*/
-  /*auto response =*/
-  /*    "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " +*/
-  /*    std::to_string(html.size()) + "\r\n\r\n" + html;*/
-  /*auto responseTup = std::make_tuple(response, "text/html");*/
-  /*return responseTup;*/
+  const std::string adminFilePath = "/home/pshr1/personal/lowlvl/networking/"
+                                    "TinyAPI/example/static/admin.html";
+  std::ifstream file(adminFilePath);
+  if (!file)
+    return std::make_tuple("Failed to open the file", "text/html");
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  std::string html = buffer.str();
+  auto responseTup = std::make_tuple(html, "text/html");
+  return responseTup;
 }
 
 std::tuple<std::string, std::string> loginPage(std::string url_endpoint) {
@@ -126,12 +137,12 @@ std::tuple<std::string, std::string> indexCSS(std::string url_endpoint) {
   return responseTup;
 }
 
-int main() {
+int main(int argc, char const *argv[]) {
   // Quickly setting up a HTTP Rest Api at device's localhost
   std::string localhost = "127.0.0.1";
   size_t timeout = 1450000; // 14.5s
-  TinyAPI *new_api =
-      new TinyAPI(8000, 1024, 5, localhost, timeout, TinyAPI::HOST_OS::LINUX);
+  int port = argv[1] ? std::stoi(argv[1]) : 8000;
+  TinyAPI *new_api = new TinyAPI(port, 8192, 5, localhost, timeout);
   if (new_api->initialize_server() == 1) {
     return 1;
   }
