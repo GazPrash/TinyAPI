@@ -69,6 +69,11 @@ int main(int argc, char const *argv[]) {
   return 0;
 }
 ```
+2.1 Demo:
+
+<img width="333" height="535" alt="Screenshot 2026-06-27 at 1 45 19 AM" src="https://github.com/user-attachments/assets/4d412204-dc41-45d0-8e35-fb4c90568680" />
+
+
 
 3. **Build and run!**:
 
