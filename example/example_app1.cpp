@@ -85,8 +85,7 @@ std::tuple<std::string, std::string> userLogin(RequestContext ctx) {
   if (!validatePostRequest(ctx.request_body))
     return std::make_tuple("Invalid Request", "text/html");
 
-  const std::string adminFilePath = "/home/pshr1/personal/lowlvl/networking/"
-                                    "TinyAPI/example/static/admin.html";
+  const std::string adminFilePath = "example/static/admin.html";
   std::ifstream file(adminFilePath);
   if (!file)
     return std::make_tuple("Failed to open the file", "text/html");
@@ -98,8 +97,7 @@ std::tuple<std::string, std::string> userLogin(RequestContext ctx) {
 }
 
 std::tuple<std::string, std::string> loginPage(RequestContext ctx) {
-  const std::string filePath = "/home/pshr1/personal/lowlvl/networking/TinyAPI/"
-                               "example/static/login.html";
+  const std::string filePath = "example/static/login.html";
   std::ifstream file(filePath);
   if (!file)
     return std::make_tuple("Failed to open the file", "text/html");
@@ -112,8 +110,7 @@ std::tuple<std::string, std::string> loginPage(RequestContext ctx) {
 
 std::tuple<std::string, std::string> resetCSS(RequestContext ctx) {
 
-  const std::string filePath = "/home/pshr1/personal/lowlvl/networking/TinyAPI/"
-                               "example/static/reset.css";
+  const std::string filePath = "example/static/reset.css";
   std::ifstream file(filePath);
   if (!file)
     return std::make_tuple("Failed to open the file", "text/html");
@@ -126,8 +123,7 @@ std::tuple<std::string, std::string> resetCSS(RequestContext ctx) {
 
 std::tuple<std::string, std::string> indexCSS(RequestContext ctx) {
 
-  const std::string filePath = "/home/pshr1/personal/lowlvl/networking/TinyAPI/"
-                               "example/static/index.css";
+  const std::string filePath = "example/static/index.css";
   std::ifstream file(filePath);
   if (!file)
     return std::make_tuple("Failed to open the file", "text/html");
@@ -138,8 +134,44 @@ std::tuple<std::string, std::string> indexCSS(RequestContext ctx) {
   return responseTup;
 }
 
+std::tuple<std::string, std::string> showcasePage(RequestContext ctx) {
+  const std::string filePath = "example/static/showcase.html";
+  std::ifstream file(filePath);
+  if (!file)
+    return std::make_tuple("Failed to open the file", "text/html");
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  std::string html = buffer.str();
+  auto responseTup = std::make_tuple(html, "text/html");
+  return responseTup;
+}
+
+std::tuple<std::string, std::string> serveShowcaseJS(RequestContext ctx) {
+  const std::string filePath = "example/static/showcase.js";
+  std::ifstream file(filePath);
+  if (!file)
+    return std::make_tuple("Failed to open the file", "text/html");
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  std::string js = buffer.str();
+  auto responseTup = std::make_tuple(js, "application/javascript");
+  return responseTup;
+}
+
+std::tuple<std::string, std::string> serveShowcaseCSS(RequestContext ctx) {
+  const std::string filePath = "example/static/showcase.css";
+  std::ifstream file(filePath);
+  if (!file)
+    return std::make_tuple("Failed to open the file", "text/html");
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  std::string css = buffer.str();
+  auto responseTup = std::make_tuple(css, "text/css");
+  return responseTup;
+}
+
+
 int main(int argc, char const *argv[]) {
-  // Quickly setting up a HTTP Rest Api at device's localhost
   std::string localhost = "127.0.0.1";
   size_t timeout = 1450000; // 14.5s
   int port = argv[1] ? std::stoi(argv[1]) : 8000;
@@ -155,15 +187,18 @@ int main(int argc, char const *argv[]) {
   new_api->getMethods["/gato"] = gatoImage;
   new_api->getMethods["/data"] = getData;
   new_api->getMethods["/login"] = loginPage;
+
+  // Supports live realoding ;)
   new_api->getMethods["/index.css"] = indexCSS;
   new_api->getMethods["/reset.css"] = resetCSS;
+  new_api->getMethods["/showcase"] = showcasePage;
+  new_api->getMethods["/showcase.js"] = serveShowcaseJS;
+  new_api->getMethods["/showcase.css"] = serveShowcaseCSS;
 
   new_api->postMethods["/login"] = userLogin;
 
-  // Start the server
   new_api->enable_listener();
 
-  // Delete the instance for cleanup
   delete new_api;
   return 0;
 }

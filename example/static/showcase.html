@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TinyAPI Showcase</title>
+    <link rel="stylesheet" href="/showcase.css">
+</head>
+<body>
+    <div class="container">
+        <h1>TinyAPI Showcase</h1>
+        <p class="subtitle">A basic showcase, using vanilla JS and a minimal C++ backend</p>
+        
+        <div class="section">
+            <div class="counter-display" id="counterDisplay">0</div>
+            <button id="counterBtn">Increment</button>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="section">
+            <div class="button-group">
+                <button id="fetchImageBtn">Fetch Random Image</button>
+                <button id="fetchBackendImageBtn">Fetch Image from Backend</button>
+            </div>
+            <div id="imageContainer" class="image-container">
+                <p>No image loaded yet</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/showcase.js"></script>
+</body>
+</html>
