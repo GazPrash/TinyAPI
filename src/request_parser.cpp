@@ -1,4 +1,4 @@
-#include "tinyapi.h"
+#include "../include/tinyapi.h"
 #include <iostream>
 #include <ostream>
 #include <sstream>

@@ -1,5 +1,4 @@
-#include "tinyapi.h"
-#include <bits/types/struct_timeval.h>
+#include "../include/tinyapi.h"
 #include <cstddef>
 #include <cstring>
 #include <iostream>
@@ -107,7 +106,7 @@ void TinyAPI ::enable_listener() {
   time_t server_start_time = time(NULL);
   std::cout << "Server is now open for connection...[PORT:" << port << "]\n";
 
-  char requestBuffer[buffer_sz];
+  std::vector<char> requestBuffer(buffer_sz);
   while (1) {
     time_t current_time = time(NULL);
     if (difftime(current_time, server_start_time) >= server_timeout_sec) {
@@ -120,13 +119,13 @@ void TinyAPI ::enable_listener() {
       std::cerr << "Couldn't establish connection with the client. \n";
     }
     // requests.\n";
-    int bytesRead = recv(client, requestBuffer, sizeof(requestBuffer), 0);
+    int bytesRead = recv(client, requestBuffer.data(), requestBuffer.size(), 0);
     if (bytesRead < 0) {
       continue;
     }
 
     RequestContext requestInfo =
-        requestHandler.HTTPR11(bytesRead, requestBuffer, buffer_sz);
+        requestHandler.HTTPR11(bytesRead, requestBuffer.data(), buffer_sz);
 
     if (requestInfo.status_code != STATUS_CODE::OK) {
       requestInfo.log();
@@ -151,7 +150,7 @@ void TinyAPI ::enable_listener() {
       std::string response = std::get<0>(responseTup);
       std::string response_format = std::get<1>(responseTup);
       SendHttpResponse(client, response, response_format);
-      memset(requestBuffer, 0, sizeof(requestBuffer));
+      memset(requestBuffer.data(), 0, requestBuffer.size());
     } else if (requestInfo.http_method == HTTP_METHOD::POST) {
       auto postmethod = postMethods[requestInfo.url_endpoint];
       if (!postmethod) {
@@ -168,7 +167,7 @@ void TinyAPI ::enable_listener() {
       std::string response = std::get<0>(responseTup);
       std::string response_format = std::get<1>(responseTup);
       SendHttpResponse(client, response, response_format);
-      memset(requestBuffer, 0, sizeof(requestBuffer));
+      memset(requestBuffer.data(), 0, requestBuffer.size());
     } else {
       /*HTTP 405 status code indicates that the server has received a request
        * method that is not supported for the target resource*/
