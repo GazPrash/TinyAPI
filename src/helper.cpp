@@ -6,7 +6,7 @@
 #include <string>
 
 std::string
-Helper::MapToString(const std::map<std::string, std::string> dataMap) {
+Helper::MapToString(const std::unordered_map<std::string, std::string>& dataMap) {
   std::ostringstream map_string;
   map_string << "{";
 
@@ -20,7 +20,7 @@ Helper::MapToString(const std::map<std::string, std::string> dataMap) {
   return map_string.str();
 }
 
-std::string Helper::jsonToString(const std::string filepath) {
+std::string Helper::jsonToString(const std::string& filepath) {
   std::ifstream jsonFile(filepath);
   if (!jsonFile.is_open()) {
     std::cerr << "Failed to open the JSON file." << std::endl;
@@ -31,7 +31,7 @@ std::string Helper::jsonToString(const std::string filepath) {
   return json_string.str();
 }
 
-std::string Helper::gerCurrentDate() {
+std::string Helper::getCurrentDate() {
   const time_t now = time(nullptr);
   struct tm *timeInfo;
   timeInfo = gmtime(&now);

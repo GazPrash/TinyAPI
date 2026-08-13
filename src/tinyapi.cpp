@@ -12,7 +12,7 @@
 #include <unistd.h>
 
 TinyAPI ::TinyAPI(int port, int buffer_sz, int maxConnections,
-                  std::string server_ip, size_t server_timeout)
+                  const std::string& server_ip, size_t server_timeout)
     : port(port), buffer_sz(buffer_sz), server_timeout(server_timeout) {
   maxRequestHandles = maxConnections;
   ip = server_ip;
@@ -107,7 +107,7 @@ void TinyAPI ::enable_listener() {
   std::cout << "Server is now open for connection...[PORT:" << port << "]\n";
 
   std::vector<char> requestBuffer(buffer_sz);
-  while (1) {
+  while (true) {
     time_t current_time = time(NULL);
     if (difftime(current_time, server_start_time) >= server_timeout_sec) {
       std::cerr << "Server Timed out! (ET : " << server_timeout << " ms) \n";
@@ -180,9 +180,9 @@ void TinyAPI ::enable_listener() {
   }
 }
 
-int TinyAPI ::SendHttpResponse(u_int client, std::string response,
-                               std::string response_format,
-                               std::string httpResponseCode) {
+int TinyAPI ::SendHttpResponse(u_int client, const std::string& response,
+                               const std::string& response_format,
+                               const std::string& httpResponseCode) {
 
   std::string httpResponse = "";
   httpResponse += httpResponseCode;
@@ -202,7 +202,7 @@ int TinyAPI ::SendHttpResponse(u_int client, std::string response,
   return 0;
 }
 
-std::string TinyAPI ::parsePostRequest(std::string request_body) {
+std::string TinyAPI ::parsePostRequest(const std::string& request_body) {
   size_t pos = request_body.find("\r\n\r\n");
   if (pos == std::string::npos) {
     return "<Invalid-Post-Request>";

@@ -10,6 +10,7 @@
 #include <sstream>
 #include <string>
 #include <tuple>
+#include <memory>
 
 // You can quickly define a function like this to convert images or any binary
 // data into a string format.
@@ -23,46 +24,7 @@ std::string readImageFile(const std::string &filename) {
   return ss.str();
 }
 
-// route = /home
-std::tuple<std::string, std::string> HomePage(RequestContext ctx) {
-  // you can access the exact endpoint inside your defined method using the
-  // url_endpoint variable
-  std::map<std::string, std::string> responseMap;
-  responseMap["Greet"] = "Welcome Home!";
-  auto response = Helper::MapToString(responseMap);
-  auto responseTup = std::make_tuple(response, "text/html");
-  return responseTup;
-}
-
-// route = /about
-std::tuple<std::string, std::string> AboutPage(RequestContext ctx) {
-  std::map<std::string, std::string> responseMap;
-  responseMap["Made by"] = "Sammy Zane";
-  responseMap["Total Downloads"] = "123,000+";
-  responseMap["Important links"] = "https://github.com/";
-  auto response = Helper::MapToString(responseMap);
-  auto responseTup = std::make_tuple(response, "text/html");
-  return responseTup;
-}
-
-std::tuple<std::string, std::string> gatoImage(RequestContext ctx) {
-  if (ctx.url_endpoint.empty()) {
-    ctx.url_endpoint = "asdj";
-  }
-  const std::string GATO_IMG_PATH = "images/gato.png";
-  std::string imgContent = readImageFile(GATO_IMG_PATH);
-  auto responseTup = std::make_tuple(imgContent, "image/png");
-  return responseTup;
-}
-
-std::tuple<std::string, std::string> getData(RequestContext ctx) {
-  const std::string dataPath = "test/data/testdata.json";
-  auto response = Helper::jsonToString(dataPath);
-  auto responseTup = std::make_tuple(response, "text/html");
-  return responseTup;
-}
-
-bool validatePostRequest(std::string parsed_request) {
+bool validatePostRequest(const std::string& parsed_request) {
   std::cout << "Parsed Request: " << parsed_request << std::endl;
   std::unordered_map<std::string, std::string> formData;
   std::istringstream stream(parsed_request);
@@ -81,12 +43,12 @@ bool validatePostRequest(std::string parsed_request) {
           formData["password"] == "password");
 }
 
-std::tuple<std::string, std::string> userLogin(RequestContext ctx) {
+std::tuple<std::string, std::string> userLogin(const RequestContext& ctx) {
   if (!validatePostRequest(ctx.request_body))
     return std::make_tuple("Invalid Request", "text/html");
 
   const std::string adminFilePath = "example/static/admin.html";
-  std::ifstream file(adminFilePath);
+  std::ifstream file(adminFilePath, std::ios::binary);
   if (!file)
     return std::make_tuple("Failed to open the file", "text/html");
   std::stringstream buffer;
@@ -96,9 +58,9 @@ std::tuple<std::string, std::string> userLogin(RequestContext ctx) {
   return responseTup;
 }
 
-std::tuple<std::string, std::string> loginPage(RequestContext ctx) {
+std::tuple<std::string, std::string> loginPage(const RequestContext& ctx) {
   const std::string filePath = "example/static/login.html";
-  std::ifstream file(filePath);
+  std::ifstream file(filePath, std::ios::binary);
   if (!file)
     return std::make_tuple("Failed to open the file", "text/html");
   std::stringstream buffer;
@@ -108,10 +70,10 @@ std::tuple<std::string, std::string> loginPage(RequestContext ctx) {
   return responseTup;
 }
 
-std::tuple<std::string, std::string> resetCSS(RequestContext ctx) {
+std::tuple<std::string, std::string> resetCSS(const RequestContext& ctx) {
 
   const std::string filePath = "example/static/reset.css";
-  std::ifstream file(filePath);
+  std::ifstream file(filePath, std::ios::binary);
   if (!file)
     return std::make_tuple("Failed to open the file", "text/html");
   std::stringstream buffer;
@@ -121,10 +83,10 @@ std::tuple<std::string, std::string> resetCSS(RequestContext ctx) {
   return responseTup;
 }
 
-std::tuple<std::string, std::string> indexCSS(RequestContext ctx) {
+std::tuple<std::string, std::string> indexCSS(const RequestContext& ctx) {
 
   const std::string filePath = "example/static/index.css";
-  std::ifstream file(filePath);
+  std::ifstream file(filePath, std::ios::binary);
   if (!file)
     return std::make_tuple("Failed to open the file", "text/html");
   std::stringstream buffer;
@@ -134,9 +96,9 @@ std::tuple<std::string, std::string> indexCSS(RequestContext ctx) {
   return responseTup;
 }
 
-std::tuple<std::string, std::string> showcasePage(RequestContext ctx) {
+std::tuple<std::string, std::string> showcasePage(const RequestContext& ctx) {
   const std::string filePath = "example/static/showcase.html";
-  std::ifstream file(filePath);
+  std::ifstream file(filePath, std::ios::binary);
   if (!file)
     return std::make_tuple("Failed to open the file", "text/html");
   std::stringstream buffer;
@@ -146,9 +108,9 @@ std::tuple<std::string, std::string> showcasePage(RequestContext ctx) {
   return responseTup;
 }
 
-std::tuple<std::string, std::string> serveShowcaseJS(RequestContext ctx) {
+std::tuple<std::string, std::string> serveShowcaseJS(const RequestContext& ctx) {
   const std::string filePath = "example/static/showcase.js";
-  std::ifstream file(filePath);
+  std::ifstream file(filePath, std::ios::binary);
   if (!file)
     return std::make_tuple("Failed to open the file", "text/html");
   std::stringstream buffer;
@@ -158,9 +120,9 @@ std::tuple<std::string, std::string> serveShowcaseJS(RequestContext ctx) {
   return responseTup;
 }
 
-std::tuple<std::string, std::string> serveShowcaseCSS(RequestContext ctx) {
+std::tuple<std::string, std::string> serveShowcaseCSS(const RequestContext& ctx) {
   const std::string filePath = "example/static/showcase.css";
-  std::ifstream file(filePath);
+  std::ifstream file(filePath, std::ios::binary);
   if (!file)
     return std::make_tuple("Failed to open the file", "text/html");
   std::stringstream buffer;
@@ -175,20 +137,30 @@ int main(int argc, char const *argv[]) {
   std::string localhost = "127.0.0.1";
   size_t timeout = 1450000; // 14.5s
   int port = argv[1] ? std::stoi(argv[1]) : 8000;
-  TinyAPI *new_api = new TinyAPI(port, 8192, 5, localhost, timeout);
+  auto new_api = std::make_unique<TinyAPI>(port, 8192, 5, localhost, timeout);
   if (new_api->initialize_server() == 1) {
     return 1;
   }
 
-  // Easy Routing
-  new_api->getMethods["/"] = HomePage;
-  new_api->getMethods["/home"] = HomePage;
-  new_api->getMethods["/about"] = AboutPage;
-  new_api->getMethods["/gato"] = gatoImage;
-  new_api->getMethods["/data"] = getData;
+  // Easy Routing with Lambdas
+  auto homeLambda = [](const RequestContext& ctx) {
+    std::unordered_map<std::string, std::string> responseMap;
+    responseMap["Greet"] = "Welcome Home!";
+    return std::make_tuple(Helper::MapToString(responseMap), "text/html");
+  };
+
+  new_api->getMethods["/"] = homeLambda;
+  new_api->getMethods["/home"] = homeLambda;
+
+  new_api->getMethods["/gato"] = [](const RequestContext& ctx) {
+    return std::make_tuple(readImageFile("images/gato.png"), "image/png");
+  };
+
+  new_api->getMethods["/data"] = [](const RequestContext& ctx) {
+    return std::make_tuple(Helper::jsonToString("test/data/testdata.json"), "text/html");
+  };
   new_api->getMethods["/login"] = loginPage;
 
-  // Supports live realoding ;)
   new_api->getMethods["/index.css"] = indexCSS;
   new_api->getMethods["/reset.css"] = resetCSS;
   new_api->getMethods["/showcase"] = showcasePage;
@@ -199,6 +171,5 @@ int main(int argc, char const *argv[]) {
 
   new_api->enable_listener();
 
-  delete new_api;
   return 0;
 }

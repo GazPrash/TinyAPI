@@ -5,15 +5,15 @@
 
 // Must be used when response status is not an error code | 200OK
 int HTTPResponseHandler ::HTTPResponseStandard(const int client,
-                                               const std::string response,
-                                               std::string response_format,
+                                               const std::string& response,
+                                               const std::string& response_format,
                                                int status_code) {
 
   std::string httpResponseCode = "HTTP/1.1 200 OK\n";
   std::string httpResponse = "";
   httpResponse += httpResponseCode;
   /*std::string httpResponse = "HTTP/1.1 200 OK\n";*/
-  httpResponse += Helper::gerCurrentDate();
+  httpResponse += Helper::getCurrentDate();
   httpResponse += "Content-Type: " + response_format + "\n";
   httpResponse += "Content-Length:" + std::to_string(response.size()) + "\n";
   httpResponse += "Accept-Ranges: bytes\n";

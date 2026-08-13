@@ -28,9 +28,10 @@ git clone https://github.com/GazPrash/TinyAPI.git
 ```cpp
 // Include the tinyapi.h header at the top
 #include "include/tinyapi.h"
+#include <memory>
 
 // for the complete example, checkout: /example/example_app1.cpp
-std::tuple<std::string, std::string> home(RequestContext ctx) {
+std::tuple<std::string, std::string> home(const RequestContext& ctx) {
   // you can access the exact endpoint inside your defined method using the
   // 'ctx.url_endpoint' variable
   std::string response = "Greetings User! Welcome to TinyAPI.";
@@ -41,7 +42,7 @@ int main(int argc, char const *argv[]) {
   std::string localhost = "127.0.0.1";
   size_t timeout = 1450000; // 14.5s
   int port = argv[1] ? std::stoi(argv[1]) : 8000;
-  TinyAPI *new_api = new TinyAPI(port, 8192, 5, localhost, timeout);
+  auto new_api = std::make_unique<TinyAPI>(port, 8192, 5, localhost, timeout);
   if (new_api->initialize_server() == 1) {
     return 1;
   }
@@ -49,7 +50,6 @@ int main(int argc, char const *argv[]) {
   // Easy Routing
   new_api->getMethods["/"] = HomePage;
   new_api->getMethods["/home"] = HomePage;
-  new_api->getMethods["/about"] = AboutPage;
   new_api->getMethods["/gato"] = gatoImage;
   new_api->getMethods["/data"] = getData;
   new_api->getMethods["/login"] = loginPage;
@@ -65,7 +65,6 @@ int main(int argc, char const *argv[]) {
 
   new_api->enable_listener();
 
-  delete new_api;
   return 0;
 }
 ```
