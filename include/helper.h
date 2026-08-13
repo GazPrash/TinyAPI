@@ -4,13 +4,13 @@
 #include <csignal>
 #include <cstdlib>
 #include <ctime>
-#include <map>
+#include <unordered_map>
 #include <string>
 
 namespace Helper {
-std::string MapToString(const std::map<std::string, std::string> dataMap);
-std::string jsonToString(const std::string filepath);
-std::string gerCurrentDate();
+std::string MapToString(const std::unordered_map<std::string, std::string>& dataMap);
+std::string jsonToString(const std::string& filepath);
+std::string getCurrentDate();
 }; // namespace Helper
 
 #endif // HELPER_H

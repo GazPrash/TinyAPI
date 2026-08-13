@@ -17,8 +17,6 @@ RequestContext RequestHandler::HTTPR11(const int bytesRead, char *requestBuffer,
     ctx.message = "Payload Exceeded";
     ctx.status_code = STATUS_CODE::PAYLOAD_TOO_LARGE;
     return ctx;
-  } else {
-    requestBuffer[bytesRead] = '\0';
   }
   // Convert received data to a string
   std::string httpRequest(requestBuffer, bytesRead);

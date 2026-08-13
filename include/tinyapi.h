@@ -12,6 +12,7 @@
 #include <sys/types.h>
 #include <tuple>
 #include <unistd.h>
+#include <functional>
 #include <unordered_map>
 #include <vector>
 
@@ -35,20 +36,20 @@ private:
 
   // float server_wait_time;
   RequestHandler requestHandler;
-  int SendHttpResponse(u_int client, std::string response,
-                       std::string response_format,
-                       std::string httpResponseCode = "HTTP/1.1 200 OK\n");
-  std::string parsePostRequest(std::string);
+  int SendHttpResponse(u_int client, const std::string& response,
+                       const std::string& response_format,
+                       const std::string& httpResponseCode = "HTTP/1.1 200 OK\n");
+  std::string parsePostRequest(const std::string&);
 
 public:
-  TinyAPI(int port, int buffer_sz, int maxConnections, std::string server_ip,
+  TinyAPI(int port, int buffer_sz, int maxConnections, const std::string& server_ip,
           size_t server_timeout);
   ~TinyAPI();
   std::unordered_map<std::string,
-                     std::tuple<std::string, std::string> (*)(RequestContext)>
+                     std::function<std::tuple<std::string, std::string>(const RequestContext&)>>
       getMethods;
   std::unordered_map<std::string,
-                     std::tuple<std::string, std::string> (*)(RequestContext)>
+                     std::function<std::tuple<std::string, std::string>(const RequestContext&)>>
       postMethods;
   int initialize_server(bool bind_default = true);
   void enable_listener();
